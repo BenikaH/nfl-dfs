@@ -7,7 +7,7 @@ import MySQLdb
 
 # weekNum = int(raw_input("Week number? "))
 
-f = open('weekinfo.txt', 'r')
+f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 

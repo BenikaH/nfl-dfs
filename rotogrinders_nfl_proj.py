@@ -8,7 +8,7 @@ import MySQLdb
 
 headerList = ['week', 'playerID', 'playernm_full', 'playernm_first', 'playernm_last', 'Pos', 'GameInfo', 'dk_salary', 'dkp', 'dk_value', 'playerLink', 'fd_salary', 'fdp', 'fd_value']
 
-f = open('weekinfo.txt', 'r')
+f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 

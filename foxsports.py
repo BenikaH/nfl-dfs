@@ -46,7 +46,7 @@ def getFoxProj(page, weekNum):
     print page, "complete"  
     return playerList
 
-f = open('weekinfo.txt', 'r')
+f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 
