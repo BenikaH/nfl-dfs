@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 import MySQLdb
 
-f = open('nfl_files/weekinfo.txt', 'r')
+f = open('weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 
