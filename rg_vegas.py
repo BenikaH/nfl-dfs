@@ -7,17 +7,29 @@ import MySQLdb
 
 # weekNum = int(raw_input("Week number? "))
 
-f = open('nfl_files/weekinfo.txt', 'r')
+f = open('weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 
-firstPull = raw_input("Are these opening odds (y/n)? ")
+# firstPull = raw_input("Are these opening odds (y/n)? ")
 
 headerList = ['Week', 'Date', 'Time', 'HomeAway', 'Team', 'Opp', 'Team Spread', 'Opp Spread', 'Total Points', 'Team Proj Score', 'Opp Proj Score', 'Opening Team Score', 'Opening Opp Score', 'Team Score Chg', 'Opp Score Chg']
 
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+
+with con:
+
+# bring in past results
+    cur = con.cursor()
+    cur.execute("SELECT * FROM rotogrinders_odds WHERE week = %d" % (weekNum))
+
+    rows = cur.fetchall()
+    if len(rows) > 0:
+        firstPull = 'n'
+    else:
+        firstPull = 'y'
+
 if firstPull.lower() != 'y':
-    
-    con = MySQLdb.connect('localhost', 'root', '', 'test')
 
     pastresults = []
     holder = []
@@ -38,8 +50,6 @@ if firstPull.lower() != 'y':
 
     # print pastresults
 
-tdate = date.today()
-tdate = tdate.strftime("%m/%d/%Y")
 r = requests.get("https://rotogrinders.com/pages/nfl-vegas-odds-page-56651").text
 soup = BeautifulSoup(r)
 
@@ -78,7 +88,7 @@ for game in gameList:
     holder.insert(3, 'Away')             # Add 'Away' to away teams
     gameinfo.append(holder)
 
-print gameinfo[0]
+# print gameinfo[0]
 
 if firstPull.lower() == 'y':
     for game in gameinfo:
@@ -93,15 +103,15 @@ else:
         for i in range(0,4):
             game.append(0.00)
         for pull in pastresults:
-            print pull
-            print game
+            # print pull
+            # print game
             if game[4] == pull[5]:
                 game[11] = pull[12]
                 game[12] = pull[13]
                 game[13] = round(float(game[9]),2) - round(float(game[11]),2)
                 game[14] = round(float(game[10]),2) - round(float(game[12]),2)
                 continue
-        
+
 
 #### Add to dictionary
 # dictList = []
@@ -113,14 +123,12 @@ else:
 
 ####### Add to database
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')
-
 query = "DELETE FROM rotogrinders_odds WHERE week = %d" % (weekNum)
 x = con.cursor()
 x.execute(query)
 
 for row in gameinfo:
-    print row
+    # print row
     with con:
         query = "INSERT INTO rotogrinders_odds (week, game_date, game_time, home_away, team, opp, team_spread, \
             opp_spread, total_pts, team_proj, opp_proj, team_proj_open, opp_proj_open, team_proj_chg, opp_proj_chg) \
@@ -129,6 +137,3 @@ for row in gameinfo:
             round(float(row[8]),2), round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2))
         x = con.cursor()
         x.execute(query)
-
-
-
