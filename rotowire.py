@@ -102,7 +102,8 @@ for player in playerList:
         player.insert(3, '')
 
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM rotowire_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

@@ -1,15 +1,15 @@
+#!/usr/local/bin/python2.7
+
 from bs4 import BeautifulSoup
 import requests
 import re
-import csv
-from datetime import date, datetime, timedelta
-import time
 import MySQLdb
 
-tdate = date.today()
-tdate = tdate.strftime("%m/%d/%Y")
+f = open('weekinfo.txt', 'r')
+ftext = f.read().split(',')
+weekNum = int(ftext[0])
 
-weekNum = int(raw_input("Week number? "))
+# weekNum = int(raw_input("Week number? "))
 
 posSet = ["QB", "RB", "WR", "TE"]
 
@@ -68,7 +68,8 @@ print playerList
 
 ####### Add to database
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM fantasypros_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

@@ -1,3 +1,5 @@
+#!/usr/local/bin/python2.7
+
 import requests
 from bs4 import BeautifulSoup
 import MySQLdb
@@ -93,7 +95,8 @@ for row in masterList:
 listlen = len(masterList)
 # print masterList
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 for row in masterList:
     with con:

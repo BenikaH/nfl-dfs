@@ -1,19 +1,18 @@
+#!/usr/local/bin/python2.7
+
 from bs4 import BeautifulSoup
 import requests
 import re
-import csv
-from datetime import date, datetime, timedelta
-import time
 import MySQLdb
 
 
 headerList = ['week', 'playerID', 'playernm_full', 'playernm_first', 'playernm_last', 'Pos', 'GameInfo', 'dk_salary', 'dkp', 'dk_value', 'playerLink', 'fd_salary', 'fdp', 'fd_value']
 
-tdate = date.today()
-tdate = tdate.strftime("%m/%d/%Y")
+f = open('weekinfo.txt', 'r')
+ftext = f.read().split(',')
+weekNum = int(ftext[0])
 
-
-weekNum = int(raw_input("Week number? "))
+# weekNum = int(raw_input("Week number? "))
 
 ####### Sign into Rotogrinders
 r = requests.get("https://rotogrinders.com/sign-in")
@@ -144,7 +143,8 @@ print playerList
 
 ####### Add to database
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM rotogrinders_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

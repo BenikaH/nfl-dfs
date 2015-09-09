@@ -1,9 +1,8 @@
+#!/usr/local/bin/python2.7
+
 from bs4 import BeautifulSoup
 import requests
 import re
-import csv
-from datetime import date, datetime, timedelta
-import time
 import MySQLdb
 
 
@@ -47,15 +46,18 @@ def getFoxProj(page, weekNum):
     print page, "complete"  
     return playerList
 
-    
+f = open('weekinfo.txt', 'r')
+ftext = f.read().split(',')
+weekNum = int(ftext[0])
+
+# weekNum = int(raw_input("Week number? "))
+   
 r = requests.get("http://www.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=-1&split=4&playerSearchStatus=1").text
 soup = BeautifulSoup(r)
 
 page = soup.find("a", {"id" : "MainColumn_LastPageLink"})
 
 lastpage = int(page.text)
-
-weekNum = int(raw_input("Week number? "))
 
 playerList = []
 for i in range(1,lastpage):
@@ -70,7 +72,9 @@ print playerList[:2]
 
 ####### Add to database
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+
 
 query = "DELETE FROM foxsports_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

@@ -65,20 +65,12 @@ headerList = ['week','player_id','player','opp','opp_rank','ovr_rank','pos_rank'
  u'8300', u'2.72', u'Aaron', u'Rodgers ', u'QB', u' GB']
 """
 
+# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')   #### Localhost connection
 con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM numberfire_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()
 x.execute(query)
-#
-# query = "SELECT MAX(id) FROM numberfire_wkly_proj"
-# x = con.cursor()
-# x.execute(query)
-# maxrows = x.fetchall()
-#
-# print maxrows
-#
-# query = "ALTER TABLE numberfire_wkly_proj AUTO_INCREMENT = %d" % (maxrows)
 
 for row in playerList:
     print row
