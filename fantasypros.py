@@ -3,6 +3,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import time
 import MySQLdb
 
 f = open('nfl-dfs/weekinfo.txt', 'r')
