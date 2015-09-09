@@ -4,10 +4,14 @@ from bs4 import BeautifulSoup
 import requests
 import MySQLdb
 
+f = open('nfl_files/weekinfo.txt', 'r')
+ftext = f.read().split(',')
+weekNum = int(ftext[0])
+
 r = requests.get("http://www.numberfire.com/nfl/fantasy/fantasy-football-projections").text
 soup = BeautifulSoup(r)
 
-weekNum = int(raw_input("Week number? "))
+# weekNum = int(raw_input("Week number? "))
 
 projData = soup.find_all("tbody", {"id" : "projection-data"})
 
