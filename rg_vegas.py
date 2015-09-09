@@ -6,7 +6,11 @@ import MySQLdb
 
 
 # weekNum = int(raw_input("Week number? "))
-weekNum = 1
+
+f = open('nfl_files/weekinfo.txt', 'r')
+ftext = f.read().split(',')
+weekNum = int(ftext[0])
+
 firstPull = raw_input("Are these opening odds (y/n)? ")
 
 headerList = ['Week', 'Date', 'Time', 'HomeAway', 'Team', 'Opp', 'Team Spread', 'Opp Spread', 'Total Points', 'Team Proj Score', 'Opp Proj Score', 'Opening Team Score', 'Opening Opp Score', 'Team Score Chg', 'Opp Score Chg']
