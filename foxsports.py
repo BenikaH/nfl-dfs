@@ -1,0 +1,94 @@
+from bs4 import BeautifulSoup
+import requests
+import re
+import csv
+from datetime import date, datetime, timedelta
+import time
+import MySQLdb
+
+
+def getFoxProj(page, weekNum):
+    
+    r = requests.get("http://www.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=" + str(page) + "&position=-1&split=4&playerSearchStatus=1").text
+    soup = BeautifulSoup(r)
+    
+    playerTable = soup.find("tbody")
+    
+    playerSet = playerTable.find_all("tr")
+    player = []
+    for rows in playerSet:
+        try:
+            teampos = rows.find_all("div", class_="TeamPosPlayerInfo")[0].text.replace('(','').replace(')','').replace(' ','')
+            team = teampos.split('-')[0]
+            pos = teampos.split('-')[1]
+        except:
+            teampos = ''
+            team = ''
+            pos = ''
+        for tag in rows.find_all("td", class_="status"):
+            tag.replace_with('')
+        for tag in rows.find_all("span"):
+            tag.replace_with('')    
+        plLink = rows.find("a")
+        plLink = plLink['href']
+        plID = plLink[plLink.index("player")+7:]
+        player.append(weekNum)
+        player.append(int(plID))
+        row = rows.find_all("td")
+        for item in row:
+            for tag in item.find_all("div", class_="TeamPosPlayerInfo"):
+                tag.replace_with('')
+            player.append(item.text.strip())
+        player.insert(3,pos)
+        player.insert(3,team)
+        playerList.append(player)
+        player = []
+    
+    print page, "complete"  
+    return playerList
+
+    
+r = requests.get("http://www.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=-1&split=4&playerSearchStatus=1").text
+soup = BeautifulSoup(r)
+
+page = soup.find("a", {"id" : "MainColumn_LastPageLink"})
+
+lastpage = int(page.text)
+
+weekNum = int(raw_input("Week number? "))
+
+playerList = []
+for i in range(1,lastpage):
+    getFoxProj(i,weekNum)
+    
+for player in playerList:
+    for item in player:
+        if item == '--':
+            player[player.index(item)] = '0.00'
+            # item = item.replace('--','0.00')
+print playerList[:2]
+
+####### Add to database
+
+con = MySQLdb.connect('localhost', 'root', '', 'test')
+
+query = "DELETE FROM foxsports_wkly_proj WHERE week = %d" % (weekNum)
+x = con.cursor()
+x.execute(query)
+
+for row in playerList:
+    print row
+    with con:
+        query = "INSERT INTO foxsports_wkly_proj (week, player_id, playernm_full, team, pos, \
+        pass_td, pass_yds, pass_att, pass_cmp, ints, rush_td, rush_yds, rush_att, rec_td, rec_yds, \
+        rec, twopt_conv, fumble_recovery_td, fumbles_lost, fpts) \
+        VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, \
+        %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
+        (int(row[0]), int(row[1]), row[2], row[3], row[4], \
+        round(float(row[5]),2), round(float(row[6]),2), round(float(row[7]),2), round(float(row[8]),2), \
+        round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), \
+        round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2), round(float(row[15]),2), \
+        round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2))
+        x = con.cursor()
+        x.execute(query)
+

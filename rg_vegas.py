@@ -1,0 +1,130 @@
+#!/usr/local/bin/python2.7
+
+from bs4 import BeautifulSoup
+import requests
+import MySQLdb
+
+
+# weekNum = int(raw_input("Week number? "))
+weekNum = 1
+firstPull = raw_input("Are these opening odds (y/n)? ")
+
+headerList = ['Week', 'Date', 'Time', 'HomeAway', 'Team', 'Opp', 'Team Spread', 'Opp Spread', 'Total Points', 'Team Proj Score', 'Opp Proj Score', 'Opening Team Score', 'Opening Opp Score', 'Team Score Chg', 'Opp Score Chg']
+
+if firstPull.lower() != 'y':
+    
+    con = MySQLdb.connect('localhost', 'root', '', 'test')
+
+    pastresults = []
+    holder = []
+
+    with con:
+
+    # bring in past results
+        cur = con.cursor()
+        cur.execute("SELECT * FROM rotogrinders_odds WHERE week = %d" % (weekNum))
+
+        rows = cur.fetchall()
+        if len(rows) > 0:
+            for row in rows:
+                for item in row:
+                    holder.append(item)
+                pastresults.append(holder)
+                holder = []
+
+    # print pastresults
+
+tdate = date.today()
+tdate = tdate.strftime("%m/%d/%Y")
+r = requests.get("https://rotogrinders.com/pages/nfl-vegas-odds-page-56651").text
+soup = BeautifulSoup(r)
+
+table = soup.find_all("tbody")[0]
+
+gameSet = table.find_all("tr")
+
+game = []
+gameList = []
+
+for rows in gameSet:
+    items = rows.find_all("td")
+    game.append(weekNum)
+    for item in items:
+        game.append(item.text.strip().replace('    ',' '))
+    for i in range(0,3):
+        game.append(0.00)
+    gameList.append(game)
+    game = []
+
+# print gameList
+
+####### Convert results into individual lines by team
+hmorder = [0,1,2,4,3,6,5,7,9,8]
+aworder = [0,1,2,3,4,5,6,7,8,9]
+
+holder = []
+gameinfo = []
+
+for game in gameList:
+    # print game
+    holder = [game[i] for i in hmorder]  # List method to put items into home team order
+    holder.insert(3, 'Home')             # Add 'Home' to home teams
+    gameinfo.append(holder)
+    holder = [game[i] for i in aworder]  # List method to put items into away team order
+    holder.insert(3, 'Away')             # Add 'Away' to away teams
+    gameinfo.append(holder)
+
+print gameinfo[0]
+
+if firstPull.lower() == 'y':
+    for game in gameinfo:
+        for i in range(0,4):
+            game.append(0.00)
+        game[11] = game[9]
+        game[12] = game[10]
+        game[13] = 0.00
+        game[14] = 0.00
+else:
+    for game in gameinfo:
+        for i in range(0,4):
+            game.append(0.00)
+        for pull in pastresults:
+            print pull
+            print game
+            if game[4] == pull[5]:
+                game[11] = pull[12]
+                game[12] = pull[13]
+                game[13] = round(float(game[9]),2) - round(float(game[11]),2)
+                game[14] = round(float(game[10]),2) - round(float(game[12]),2)
+                continue
+        
+
+#### Add to dictionary
+# dictList = []
+# for games in gameList:  # Create a dictionary from each row, then add to a list for csv export
+#     gamedict = {}
+#     for header in headerList:
+#         gamedict[header] = games[headerList.index(header)]
+#     dictList.append(gamedict)
+
+####### Add to database
+
+con = MySQLdb.connect('localhost', 'root', '', 'test')
+
+query = "DELETE FROM rotogrinders_odds WHERE week = %d" % (weekNum)
+x = con.cursor()
+x.execute(query)
+
+for row in gameinfo:
+    print row
+    with con:
+        query = "INSERT INTO rotogrinders_odds (week, game_date, game_time, home_away, team, opp, team_spread, \
+            opp_spread, total_pts, team_proj, opp_proj, team_proj_open, opp_proj_open, team_proj_chg, opp_proj_chg) \
+            VALUES (%d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
+            (int(row[0]), row[1], row[2], row[3], row[4], row[5], round(float(row[6]),2), round(float(row[7]),2), \
+            round(float(row[8]),2), round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2))
+        x = con.cursor()
+        x.execute(query)
+
+
+
