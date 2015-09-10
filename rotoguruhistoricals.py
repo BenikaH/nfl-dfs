@@ -26,7 +26,7 @@ def getweeklyresults(weekNm):
     
     # get list of positions and indexes
     boldind1 = boldind[0]
-    boldind = [i-boldind.index(i)-1 for i in boldind[1:]]
+    boldind = [i-boldind.index(i) for i in boldind[1:]]
     boldind[-1] = boldind[-1] - 1               ## Adjusts for Kicker
     boldind.insert(0,boldind1)
     
