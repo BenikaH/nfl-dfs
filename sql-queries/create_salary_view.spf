@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ContentFilters</key>
+	<dict/>
+	<key>auto_connect</key>
+	<true/>
+	<key>data</key>
+	<dict>
+		<key>connection</key>
+		<dict>
+			<key>database</key>
+			<string>test</string>
+			<key>host</key>
+			<string>localhost</string>
+			<key>kcid</key>
+			<string>-5252278666197957248</string>
+			<key>name</key>
+			<string>localhost</string>
+			<key>rdbms_type</key>
+			<string>mysql</string>
+			<key>sslCACertFileLocation</key>
+			<string></string>
+			<key>sslCACertFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslCertificateFileLocation</key>
+			<string></string>
+			<key>sslCertificateFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>sslKeyFileLocation</key>
+			<string></string>
+			<key>sslKeyFileLocationEnabled</key>
+			<integer>0</integer>
+			<key>type</key>
+			<string>SPSocketConnection</string>
+			<key>useSSL</key>
+			<integer>0</integer>
+			<key>user</key>
+			<string></string>
+		</dict>
+		<key>session</key>
+		<dict>
+			<key>connectionEncoding</key>
+			<string>latin1</string>
+			<key>contentFilter</key>
+			<dict/>
+			<key>contentPageNumber</key>
+			<integer>1</integer>
+			<key>contentSelection</key>
+			<data>
+			YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFy
+			Y2hpdmVyVCR0b3ASAAGGoKgHCBMUFRYaIVUkbnVsbNMJCgsMDxJX
+			TlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6INDoACgAOiEBGABIAF
+			gAdUdHlwZVRyb3dzXxAdU2VsZWN0aW9uRGV0YWlsVHlwZU5TSW5k
+			ZXhTZXTSFwsYGVxOU1JhbmdlQ291bnQQAIAG0hscHR5aJGNsYXNz
+			bmFtZVgkY2xhc3Nlc1pOU0luZGV4U2V0oh8gWk5TSW5kZXhTZXRY
+			TlNPYmplY3TSGxwiI1xOU0RpY3Rpb25hcnmiIiBfEA9OU0tleWVk
+			QXJjaGl2ZXLRJidUZGF0YYABAAgAEQAaACMALQAyADcAQABGAE0A
+			VQBgAGcAagBsAG4AcQBzAHUAdwB8AIEAoQCmALMAtQC3ALwAxwDQ
+			ANsA3gDpAPIA9wEEAQcBGQEcASEAAAAAAAACAQAAAAAAAAAoAAAA
+			AAAAAAAAAAAAAAABIw==
+			</data>
+			<key>contentSortColIsAsc</key>
+			<true/>
+			<key>contentViewport</key>
+			<string>{{0, 1067}, {926, 481}}</string>
+			<key>isToolbarVisible</key>
+			<true/>
+			<key>queries</key>
+			<string>create or replace view salary_stats as select
+dk_salary,
+count(*) as players,
+sum(dkp) as points,
+sum(dkp)/count(*) as avg_dkp
+from `dfs_results_2014`
+where dkp &lt;&gt; 0
+group by dk_salary
+order by dk_salary desc
+;</string>
+			<key>table</key>
+			<string>salary_stats</string>
+			<key>view</key>
+			<string>SP_VIEW_CUSTOMQUERY</string>
+			<key>windowVerticalDividerPosition</key>
+			<real>202</real>
+		</dict>
+	</dict>
+	<key>encrypted</key>
+	<false/>
+	<key>format</key>
+	<string>connection</string>
+	<key>queryFavorites</key>
+	<array/>
+	<key>queryHistory</key>
+	<array>
+		<string>create or replace view salary_stats as select
+dk_salary,
+count(*) as players,
+sum(dkp) as points,
+sum(dkp)/count(*) as avg_dkp
+from `dfs_results_2014`
+where dkp &lt;&gt; 0
+group by dk_salary
+order by dk_salary desc</string>
+		<string>create view salary_stats as select
+dk_salary,
+count(*) as players,
+sum(dkp) as points,
+sum(dkp)/count(*) as avg_dkp
+from `dfs_results_2014`
+where dkp &lt;&gt; 0
+group by dk_salary
+order by dk_salary desc</string>
+		<string>create view salary_stats as select
+dk_salary,
+count(*) as players,
+sum(dkp) as points,
+sum(dkp)/count(*) as avg_dkp
+from `dfs_results_2014`
+group by dk_salary
+order by dk_salary desc</string>
+		<string>create view salary_stats as select 
+pos,
+dk_salary,
+count(*) as players,
+sum(dkp) as points,
+sum(dkp)/count(*) as avg_dkp
+from `dfs_results_2014`</string>
+		<string>CREATE TABLE `foxsports_wkly_proj` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `week` int(11) DEFAULT NULL,
+  `player_id` int(11) DEFAULT NULL,
+  `playernm_full` varchar(255) DEFAULT NULL,
+  `team` varchar(20) DEFAULT NULL,
+  `pos` varchar(20) DEFAULT NULL,
+  `pass_td` double(11,2) DEFAULT NULL,
+  `pass_yds` double(11,2) DEFAULT NULL,
+  `pass_att` double(11,2) DEFAULT NULL,
+  `pass_cmp` double(11,2) DEFAULT NULL,
+  `ints` double(11,2) DEFAULT NULL,
+  `rush_td` double(11,2) DEFAULT NULL,
+  `rush_yds` double(11,2) DEFAULT NULL,
+  `rush_att` double(11,2) DEFAULT NULL,
+  `rec_td` double(11,2) DEFAULT NULL,
+  `rec_yds` double(11,2) DEFAULT NULL,
+  `rec` double(11,2) DEFAULT NULL,
+  `twopt_conv` double(11,2) DEFAULT NULL,
+  `fumble_recovery_td` double(11,2) DEFAULT NULL,
+  `fumbles_lost` double(11,2) DEFAULT NULL,
+  `fpts` double(11,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5251 DEFAULT CHARSET=utf8</string>
+		<string>CREATE TABLE `dfs_results_2014` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `week` int(11) DEFAULT NULL,
+  `player_id` int(11) DEFAULT NULL,
+  `playernm_full` varchar(255) DEFAULT NULL,
+  `team` varchar(11) DEFAULT NULL,
+  `opp` varchar(11) DEFAULT NULL,
+  `dkp` double(11,2) DEFAULT NULL,
+  `dk_salary` int(11) DEFAULT NULL,
+  `playernm_last` varchar(255) DEFAULT NULL,
+  `playernm_first` varchar(255) DEFAULT NULL,
+  `fdp` double(11,2) DEFAULT NULL,
+  `fd_salary` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6906 DEFAULT CHARSET=utf8</string>
+		<string>CREATE TABLE `player_map` (
+  `playernm_first` varchar(255) DEFAULT NULL,
+  `playernm_last` varchar(255) DEFAULT NULL,
+  `numberfire_id` int(11) DEFAULT NULL,
+  `foxsports_id` int(11) DEFAULT NULL,
+  `rotogrinders_id` int(11) DEFAULT NULL,
+  `rotowire_id` int(11) DEFAULT NULL,
+  `fantasypros_id` int(11) DEFAULT NULL,
+  `rotoguru_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</string>
+		<string>CREATE TABLE `fantasypros_wkly_proj` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `week` int(11) DEFAULT NULL,
+  `pos` varchar(4) DEFAULT NULL,
+  `player_id` int(11) DEFAULT NULL,
+  `team` varchar(20) DEFAULT NULL,
+  `playernm_full` varchar(255) DEFAULT NULL,
+  `pass_att` double(11,2) DEFAULT NULL,
+  `pass_cmp` double(11,2) DEFAULT NULL,
+  `pass_yds` double(11,2) DEFAULT NULL,
+  `pass_td` double(11,2) DEFAULT NULL,
+  `ints` double(11,2) DEFAULT NULL,
+  `rush_att` double(11,2) DEFAULT NULL,
+  `rush_yds` double(11,2) DEFAULT NULL,
+  `rush_td` double(11,2) DEFAULT NULL,
+  `rec` double(11,2) DEFAULT NULL,
+  `rec_yds` double(11,2) DEFAULT NULL,
+  `rec_td` double(11,2) DEFAULT NULL,
+  `fumbles_lost` double(11,2) DEFAULT NULL,
+  `fpts` double(11,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2043 DEFAULT CHARSET=utf8</string>
+		<string>CREATE TABLE `rotogrinders_wkly_proj` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `week` int(11) DEFAULT NULL,
+  `player_id` int(11) DEFAULT NULL,
+  `playernm_full` varchar(255) DEFAULT NULL,
+  `playernm_first` varchar(255) DEFAULT NULL,
+  `playernm_last` varchar(255) DEFAULT NULL,
+  `pos` varchar(4) DEFAULT NULL,
+  `gameinfo` varchar(255) DEFAULT NULL,
+  `dk_salary` int(11) DEFAULT NULL,
+  `dkp` double(11,2) DEFAULT NULL,
+  `dk_value` double(11,2) DEFAULT NULL,
+  `weblink` varchar(255) DEFAULT NULL,
+  `fd_salary` int(11) DEFAULT NULL,
+  `fdp` double(11,2) DEFAULT NULL,
+  `fd_value` double(11,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=585 DEFAULT CHARSET=utf8</string>
+		<string>CREATE TABLE `rotowire_wkly_proj` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `week` int(11) DEFAULT NULL,
+  `player_id` int(11) DEFAULT NULL,
+  `pos` varchar(11) DEFAULT NULL,
+  `playernm_full` varchar(255) DEFAULT NULL,
+  `playernm_last` varchar(255) DEFAULT NULL,
+  `playernm_first` varchar(255) DEFAULT NULL,
+  `team` varchar(11) DEFAULT NULL,
+  `opp` varchar(11) DEFAULT NULL,
+  `spread` double(11,2) DEFAULT NULL,
+  `over_under` double(11,2) DEFAULT NULL,
+  `ml` int(11) DEFAULT NULL,
+  `dk_salary` int(11) DEFAULT NULL,
+  `dkp` double(11,2) DEFAULT NULL,
+  `dk_value` double(11,2) DEFAULT NULL,
+  `fd_salary` int(11) DEFAULT NULL,
+  `fdp` double(11,2) DEFAULT NULL,
+  `fd_value` double(11,2) DEFAULT NULL,
+  `weblink` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8</string>
+		<string>CREATE TABLE `rotogrinders_odds` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `week` int(11) DEFAULT NULL,
+  `game_date` varchar(20) DEFAULT NULL,
+  `game_time` varchar(20) DEFAULT NULL,
+  `home_away` varchar(4) DEFAULT NULL,
+  `team` varchar(255) DEFAULT NULL,
+  `opp` varchar(255) DEFAULT NULL,
+  `team_spread` double(11,2) DEFAULT NULL,
+  `opp_spread` double(11,2) DEFAULT NULL,
+  `total_pts` double(11,2) DEFAULT NULL,
+  `team_proj` double(11,2) DEFAULT NULL,
+  `opp_proj` double(11,2) DEFAULT NULL,
+  `team_proj_open` double(11,2) DEFAULT NULL,
+  `opp_proj_open` double(11,2) DEFAULT NULL,
+  `team_proj_chg` double(11,2) DEFAULT NULL,
+  `opp_proj_chg` double(11,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</string>
+		<string>CREATE TABLE `numberfire_wkly_proj` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `week` int(11) DEFAULT NULL,
+  `player_id` int(11) DEFAULT NULL,
+  `playernm_full` varchar(255) DEFAULT NULL,
+  `opp` varchar(20) DEFAULT NULL,
+  `opp_rank` int(11) DEFAULT NULL,
+  `ovr_rank` int(11) DEFAULT NULL,
+  `pos_rank` int(11) DEFAULT NULL,
+  `pass_yds` double(11,2) DEFAULT NULL,
+  `pass_td` double(11,2) DEFAULT NULL,
+  `ints` double(11,2) DEFAULT NULL,
+  `rush_att` double(11,2) DEFAULT NULL,
+  `rush_yds` double(11,2) DEFAULT NULL,
+  `rush_td` double(11,2) DEFAULT NULL,
+  `rec` double(11,2) DEFAULT NULL,
+  `rec_yds` double(11,2) DEFAULT NULL,
+  `rec_td` double(11,2) DEFAULT NULL,
+  `numberfire_proj` double(11,2) DEFAULT NULL,
+  `sal_sep1` varchar(20) DEFAULT NULL,
+  `sal_sep2` varchar(20) DEFAULT NULL,
+  `sal_sep3` varchar(20) DEFAULT NULL,
+  `fdp` double(11,2) DEFAULT NULL,
+  `fd_salary` int(11) DEFAULT NULL,
+  `fd_value` double(11,2) DEFAULT NULL,
+  `dkp` double(11,2) DEFAULT NULL,
+  `dk_salary` int(11) DEFAULT NULL,
+  `dk_value` double(11,2) DEFAULT NULL,
+  `ff_proj` double(11,2) DEFAULT NULL,
+  `ff_salary` int(11) DEFAULT NULL,
+  `ff_value` double(11,2) DEFAULT NULL,
+  `dd_proj` double(11,2) DEFAULT NULL,
+  `dd_salary` int(11) DEFAULT NULL,
+  `dd_value` double(11,2) DEFAULT NULL,
+  `fa_proj` double(11,2) DEFAULT NULL,
+  `fa_salary` int(11) DEFAULT NULL,
+  `fa_value` double(11,2) DEFAULT NULL,
+  `draftster_proj` double(11,2) DEFAULT NULL,
+  `draftster_salary` int(11) DEFAULT NULL,
+  `draftster_value` double(11,2) DEFAULT NULL,
+  `fs_proj` double(11,2) DEFAULT NULL,
+  `fs_salary` int(11) DEFAULT NULL,
+  `fs_value` double(11,2) DEFAULT NULL,
+  `victiv_proj` double(11,2) DEFAULT NULL,
+  `victiv_salary` int(11) DEFAULT NULL,
+  `victiv_value` double(11,2) DEFAULT NULL,
+  `yahoo_proj` double(11,2) DEFAULT NULL,
+  `yahoo_salary` int(11) DEFAULT NULL,
+  `yahoo_value` double(11,2) DEFAULT NULL,
+  `playernm_first` varchar(255) DEFAULT NULL,
+  `playernm_last` varchar(255) DEFAULT NULL,
+  `pos` varchar(11) DEFAULT NULL,
+  `team` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8</string>
+		<string>SELECT
+a.player_id,
+a.playernm_full,
+a.playernm_first,
+a.playernm_last,
+a.fdp as nf_fpts,
+b.fpts as fox_fpts,
+c.fpts as fp_fpts,
+d.fdp as rg_fpts,
+e.fdp as rw_fpts
+
+
+
+FROM
+numberfire_wkly_proj a
+LEFT JOIN
+player_map map ON a.player_id = map.numberfire_id
+LEFT JOIN
+foxsports_wkly_proj b on map.foxsports_id = b.player_id
+LEFT JOIN
+fantasypros_wkly_proj c on map.fantasypros_id = c.player_id
+LEFT JOIN
+rotogrinders_wkly_proj d on map.rotogrinders_id = d.player_id
+LEFT JOIN
+rotowire_wkly_proj e on map.rotowire_id = e.player_id
+
+ORDER BY rw_fpts desc</string>
+		<string>SELECT
+a.player_id,
+a.playernm_full,
+a.playernm_first,
+a.playernm_last,
+a.fdp as nf_fpts,
+b.fpts as fox_fpts,
+c.fpts as fp_fpts,
+d.fdp as rg_fpts,
+e.fdp as rw_fpts
+
+
+
+FROM
+numberfire_wkly_proj a
+LEFT JOIN
+player_map map ON a.player_id = map.numberfire_id
+LEFT JOIN
+foxsports_wkly_proj b on map.foxsports_id = b.player_id
+LEFT JOIN
+fantasypros_wkly_proj c on map.fantasypros_id = c.player_id
+LEFT JOIN
+rotogrinders_wkly_proj d on map.rotogrinders_id = d.player_id
+LEFT JOIN
+rotowire_wkly_proj e on map.rotowire_id = e.player_id
+
+ORDER BY rw_fpts descselect distinct player_id, playernm_full, playernm_first, playernm_last from numberfire_wkly_proj</string>
+		<string>SELECT
+a.player_id,
+a.playernm_full,
+a.playernm_first,
+a.playernm_last,
+a.fdp,
+b.fpts
+
+
+
+FROM
+numberfire_wkly_proj a
+LEFT JOIN
+player_map map ON a.player_id = map.numberfire_id
+LEFT JOIN
+foxsports_wkly_proj b on map.foxsports_id = b.player_id</string>
+		<string>select distinct player_id, playernm_full, playernm_first, playernm_last, team from dfs_results_2014</string>
+		<string>select distinct player_id, playernm_full, team, pos from fantasypros_wkly_proj</string>
+		<string>select distinct player_id, playernm_full, playernm_first, playernm_last, team, pos from rotowire_wkly_proj</string>
+		<string>select distinct player_id, playernm_full, team, pos from rotowire_wkly_proj</string>
+		<string>select distinct player_id, playernm_full, pos from rotogrinders_wkly_proj</string>
+	</array>
+	<key>rdbms_type</key>
+	<string>mysql</string>
+	<key>rdbms_version</key>
+	<string>5.6.26</string>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>
