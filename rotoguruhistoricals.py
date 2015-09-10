@@ -18,9 +18,11 @@ def getweeklyresults(weekNm):
     boldind = []
     playerSet = [t for t in playerSet if (not t.find_all("hr"))]
     for i in playerSet:
-        if i.find("b"):
-            if i.text.strip() in positions:
-                boldind.append(playerSet.index(i))
+        rows = i.find_all("td")
+        for row in rows:
+            if row.find("b"):
+                if row.text.strip() in positions:
+                    boldind.append(playerSet.index(i))
     
     # get list of positions and indexes
     boldind1 = boldind[0]
