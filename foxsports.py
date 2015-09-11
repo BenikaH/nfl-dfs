@@ -45,7 +45,33 @@ def getFoxProj(page, weekNum):
     
     print page, "complete"  
     return playerList
-
+    
+def fantasyscore(player):
+    
+    passbonus = 0
+    recbonus = 0
+    rushbonus = 0
+    
+    if float(player[6]) >= 300.0:
+        passbonus = 1
+    if float(player[11]) >= 100.0:
+        rushbonus = 1
+    if float(player[14]) >= 100.0:
+        recbonus = 1
+        
+    dkscore = (float(player[5]) * 4) + (float(player[6]) * 0.04) - (float(player[9]) * 1) + (float(player[10]) * 6) + \
+    (float(player[11]) * 0.1) + (float(player[13]) * 6) + (float(player[14]) * 0.1) + (float(player[15]) * 1) + \
+    (float(player[16]) * 2) - (float(player[18]) * 1) + (passbonus * 3) + (recbonus * 3) + (rushbonus * 3)
+    
+    fdscore = (float(player[5]) * 4) + (float(player[6]) * 0.04) - (float(player[9]) * 1) + (float(player[10]) * 6) + \
+    (float(player[11]) * 0.1) + (float(player[13]) * 6) + (float(player[14]) * 0.1) + (float(player[15]) * 0.5) + \
+    (float(player[16]) * 2) - (float(player[18]) * 2)
+    
+    fpts = [round(dkscore,2), round(fdscore,2)]
+    
+    return fpts
+    
+# f = open('weekinfo.txt', 'r')             ### Local
 f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
@@ -68,7 +94,14 @@ for player in playerList:
         if item == '--':
             player[player.index(item)] = '0.00'
             # item = item.replace('--','0.00')
+    dkscore = fantasyscore(player)[0]
+    fdscore = fantasyscore(player)[1]
+    player.append(dkscore)
+    player.append(fdscore)
 print playerList[:2]
+
+
+
 
 ####### Add to database
 
@@ -85,14 +118,15 @@ for row in playerList:
     with con:
         query = "INSERT INTO foxsports_wkly_proj (week, player_id, playernm_full, team, pos, \
         pass_td, pass_yds, pass_att, pass_cmp, ints, rush_td, rush_yds, rush_att, rec_td, rec_yds, \
-        rec, twopt_conv, fumble_recovery_td, fumbles_lost, fpts) \
+        rec, twopt_conv, fumble_recovery_td, fumbles_lost, fpts, dkp, fdp) \
         VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, \
-        %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
+        %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
         (int(row[0]), int(row[1]), row[2], row[3], row[4], \
         round(float(row[5]),2), round(float(row[6]),2), round(float(row[7]),2), round(float(row[8]),2), \
         round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), \
         round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2), round(float(row[15]),2), \
-        round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2))
+        round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2), \
+        round(float(row[20]),2), round(float(row[21]),2))
         x = con.cursor()
         x.execute(query)
 

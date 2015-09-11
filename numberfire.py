@@ -5,6 +5,7 @@ import requests
 import MySQLdb
 
 f = open('nfl-dfs/weekinfo.txt', 'r')
+# f = open('weekinfo.txt', 'r')             ### Local
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 
@@ -65,7 +66,8 @@ headerList = ['week','player_id','player','opp','opp_rank','ovr_rank','pos_rank'
  u'8300', u'2.72', u'Aaron', u'Rodgers ', u'QB', u' GB']
 """
 
-# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')   #### Localhost connection
+
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
 con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM numberfire_wkly_proj WHERE week = %d" % (weekNum)

@@ -94,6 +94,80 @@ order by dk_salary desc
 	<array/>
 	<key>queryHistory</key>
 	<array>
+		<string>select nf.player_id,
+nf.playernm_full,
+nf.opp,
+nf.opp_rank,
+nf.dk_salary,
+nf.dkp,
+sal.avg_dkp as exp_dkp,
+(nf.dkp - sal.avg_dkp) as pts_v_exp
+
+from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by pts_v_exp desc, nf.dk_salary desc limit 1000</string>
+		<string>select nf.player_id,
+nf.playernm_full,
+nf.opp,
+nf.opp_rank,
+nf.dk_salary,
+nf.dkp,
+sal.avg_dkp as exp_dkp,
+(nf.dkp - sal.avg_dkp) as pts_v_exp
+
+from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by pts_v_exp desc, nf.dk_salary desc limit 200</string>
+		<string>select nf.player_id,
+nf.playernm_full,
+nf.opp,
+nf.opp_rank,
+nf.dk_salary,
+nf.dkp,
+sal.avg_dkp as exp_dkp,
+(nf.dkp - sal.avg_dkp) as pts_v_exp
+
+from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by pts_v_exp desc, nf.dk_salary desc limit 40</string>
+		<string>select nf.player_id,
+nf.playernm_full,
+nf.opp,
+nf.opp_rank,
+nf.dk_salary,
+nf.dkp,
+sal.avg_dkp as exp_dkp,
+(nf.dkp - sal.avg_dkp) as pts_v_exp
+
+from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by exp_dkp desc, nf.dk_salary desc limit 40</string>
+		<string>select nf.player_id,
+nf.playernm_full,
+nf.opp,
+nf.opp_rank,
+nf.dk_salary,
+nf.dkp,
+sal.avg_dkp as exp_dkp,
+(nf.dkp - sal.avg_dkp) as pts_v_exp
+
+from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by exp_dkp desc nf.dk_salary desc limit 40</string>
+		<string>select nf.player_id,
+nf.playernm_full,
+nf.opp,
+nf.opp_rank,
+nf.dk_salary,
+nf.dkp,
+sal.avg_dkp as exp_dkp,
+(nf.dkp - sal.avg_dkp) as pts_v_exp
+
+from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by nf.dk_salary desc limit 40</string>
+		<string>select nf.player_id,
+nf.playernm_full,
+nf.opp,
+nf.opp_rank,
+nf.dk_salary,
+nf.dkp,
+sal.avg_dkp,
+(nf.dkp - sal.avg_dkp) as pts_v_exp
+
+from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by nf.dk_salary desc limit 40</string>
+		<string>select nf.*, sal.avg_dkp from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by nf.dk_salary desc limit 40</string>
+		<string>select nf.*, sal.avg_dkp from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary order by nf.dk_salary limit 40</string>
+		<string>select nf.*, sal.avg_dkp from numberfire_wkly_proj nf left join salary_stats sal on nf.dk_salary = sal.dk_salary limit 10</string>
+		<string>select * from numberfire_wkly_proj limit 10</string>
 		<string>create or replace view salary_stats as select
 dk_salary,
 count(*) as players,
@@ -216,177 +290,6 @@ from `dfs_results_2014`</string>
   `fd_value` double(11,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=585 DEFAULT CHARSET=utf8</string>
-		<string>CREATE TABLE `rotowire_wkly_proj` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `week` int(11) DEFAULT NULL,
-  `player_id` int(11) DEFAULT NULL,
-  `pos` varchar(11) DEFAULT NULL,
-  `playernm_full` varchar(255) DEFAULT NULL,
-  `playernm_last` varchar(255) DEFAULT NULL,
-  `playernm_first` varchar(255) DEFAULT NULL,
-  `team` varchar(11) DEFAULT NULL,
-  `opp` varchar(11) DEFAULT NULL,
-  `spread` double(11,2) DEFAULT NULL,
-  `over_under` double(11,2) DEFAULT NULL,
-  `ml` int(11) DEFAULT NULL,
-  `dk_salary` int(11) DEFAULT NULL,
-  `dkp` double(11,2) DEFAULT NULL,
-  `dk_value` double(11,2) DEFAULT NULL,
-  `fd_salary` int(11) DEFAULT NULL,
-  `fdp` double(11,2) DEFAULT NULL,
-  `fd_value` double(11,2) DEFAULT NULL,
-  `weblink` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8</string>
-		<string>CREATE TABLE `rotogrinders_odds` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `week` int(11) DEFAULT NULL,
-  `game_date` varchar(20) DEFAULT NULL,
-  `game_time` varchar(20) DEFAULT NULL,
-  `home_away` varchar(4) DEFAULT NULL,
-  `team` varchar(255) DEFAULT NULL,
-  `opp` varchar(255) DEFAULT NULL,
-  `team_spread` double(11,2) DEFAULT NULL,
-  `opp_spread` double(11,2) DEFAULT NULL,
-  `total_pts` double(11,2) DEFAULT NULL,
-  `team_proj` double(11,2) DEFAULT NULL,
-  `opp_proj` double(11,2) DEFAULT NULL,
-  `team_proj_open` double(11,2) DEFAULT NULL,
-  `opp_proj_open` double(11,2) DEFAULT NULL,
-  `team_proj_chg` double(11,2) DEFAULT NULL,
-  `opp_proj_chg` double(11,2) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8</string>
-		<string>CREATE TABLE `numberfire_wkly_proj` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `week` int(11) DEFAULT NULL,
-  `player_id` int(11) DEFAULT NULL,
-  `playernm_full` varchar(255) DEFAULT NULL,
-  `opp` varchar(20) DEFAULT NULL,
-  `opp_rank` int(11) DEFAULT NULL,
-  `ovr_rank` int(11) DEFAULT NULL,
-  `pos_rank` int(11) DEFAULT NULL,
-  `pass_yds` double(11,2) DEFAULT NULL,
-  `pass_td` double(11,2) DEFAULT NULL,
-  `ints` double(11,2) DEFAULT NULL,
-  `rush_att` double(11,2) DEFAULT NULL,
-  `rush_yds` double(11,2) DEFAULT NULL,
-  `rush_td` double(11,2) DEFAULT NULL,
-  `rec` double(11,2) DEFAULT NULL,
-  `rec_yds` double(11,2) DEFAULT NULL,
-  `rec_td` double(11,2) DEFAULT NULL,
-  `numberfire_proj` double(11,2) DEFAULT NULL,
-  `sal_sep1` varchar(20) DEFAULT NULL,
-  `sal_sep2` varchar(20) DEFAULT NULL,
-  `sal_sep3` varchar(20) DEFAULT NULL,
-  `fdp` double(11,2) DEFAULT NULL,
-  `fd_salary` int(11) DEFAULT NULL,
-  `fd_value` double(11,2) DEFAULT NULL,
-  `dkp` double(11,2) DEFAULT NULL,
-  `dk_salary` int(11) DEFAULT NULL,
-  `dk_value` double(11,2) DEFAULT NULL,
-  `ff_proj` double(11,2) DEFAULT NULL,
-  `ff_salary` int(11) DEFAULT NULL,
-  `ff_value` double(11,2) DEFAULT NULL,
-  `dd_proj` double(11,2) DEFAULT NULL,
-  `dd_salary` int(11) DEFAULT NULL,
-  `dd_value` double(11,2) DEFAULT NULL,
-  `fa_proj` double(11,2) DEFAULT NULL,
-  `fa_salary` int(11) DEFAULT NULL,
-  `fa_value` double(11,2) DEFAULT NULL,
-  `draftster_proj` double(11,2) DEFAULT NULL,
-  `draftster_salary` int(11) DEFAULT NULL,
-  `draftster_value` double(11,2) DEFAULT NULL,
-  `fs_proj` double(11,2) DEFAULT NULL,
-  `fs_salary` int(11) DEFAULT NULL,
-  `fs_value` double(11,2) DEFAULT NULL,
-  `victiv_proj` double(11,2) DEFAULT NULL,
-  `victiv_salary` int(11) DEFAULT NULL,
-  `victiv_value` double(11,2) DEFAULT NULL,
-  `yahoo_proj` double(11,2) DEFAULT NULL,
-  `yahoo_salary` int(11) DEFAULT NULL,
-  `yahoo_value` double(11,2) DEFAULT NULL,
-  `playernm_first` varchar(255) DEFAULT NULL,
-  `playernm_last` varchar(255) DEFAULT NULL,
-  `pos` varchar(11) DEFAULT NULL,
-  `team` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8</string>
-		<string>SELECT
-a.player_id,
-a.playernm_full,
-a.playernm_first,
-a.playernm_last,
-a.fdp as nf_fpts,
-b.fpts as fox_fpts,
-c.fpts as fp_fpts,
-d.fdp as rg_fpts,
-e.fdp as rw_fpts
-
-
-
-FROM
-numberfire_wkly_proj a
-LEFT JOIN
-player_map map ON a.player_id = map.numberfire_id
-LEFT JOIN
-foxsports_wkly_proj b on map.foxsports_id = b.player_id
-LEFT JOIN
-fantasypros_wkly_proj c on map.fantasypros_id = c.player_id
-LEFT JOIN
-rotogrinders_wkly_proj d on map.rotogrinders_id = d.player_id
-LEFT JOIN
-rotowire_wkly_proj e on map.rotowire_id = e.player_id
-
-ORDER BY rw_fpts desc</string>
-		<string>SELECT
-a.player_id,
-a.playernm_full,
-a.playernm_first,
-a.playernm_last,
-a.fdp as nf_fpts,
-b.fpts as fox_fpts,
-c.fpts as fp_fpts,
-d.fdp as rg_fpts,
-e.fdp as rw_fpts
-
-
-
-FROM
-numberfire_wkly_proj a
-LEFT JOIN
-player_map map ON a.player_id = map.numberfire_id
-LEFT JOIN
-foxsports_wkly_proj b on map.foxsports_id = b.player_id
-LEFT JOIN
-fantasypros_wkly_proj c on map.fantasypros_id = c.player_id
-LEFT JOIN
-rotogrinders_wkly_proj d on map.rotogrinders_id = d.player_id
-LEFT JOIN
-rotowire_wkly_proj e on map.rotowire_id = e.player_id
-
-ORDER BY rw_fpts descselect distinct player_id, playernm_full, playernm_first, playernm_last from numberfire_wkly_proj</string>
-		<string>SELECT
-a.player_id,
-a.playernm_full,
-a.playernm_first,
-a.playernm_last,
-a.fdp,
-b.fpts
-
-
-
-FROM
-numberfire_wkly_proj a
-LEFT JOIN
-player_map map ON a.player_id = map.numberfire_id
-LEFT JOIN
-foxsports_wkly_proj b on map.foxsports_id = b.player_id</string>
-		<string>select distinct player_id, playernm_full, playernm_first, playernm_last, team from dfs_results_2014</string>
-		<string>select distinct player_id, playernm_full, team, pos from fantasypros_wkly_proj</string>
-		<string>select distinct player_id, playernm_full, playernm_first, playernm_last, team, pos from rotowire_wkly_proj</string>
-		<string>select distinct player_id, playernm_full, team, pos from rotowire_wkly_proj</string>
-		<string>select distinct player_id, playernm_full, pos from rotogrinders_wkly_proj</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>

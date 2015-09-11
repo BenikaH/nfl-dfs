@@ -1,9 +1,8 @@
-* Update all MySQLdb connections to new server
-* Create necessary tables on new server
 * Turn all scripts into functions
 * Write master scraper
 * Write SQL query to pull data I want in output
 * Output to CSV
 * Email CSV to myself
+* Build SQL views that I may need (add a v_ at the beginning of the name for identification)
 
 * Are there any inputs we need to put into a text file (including site locations e.g. DraftKings JSON)

@@ -7,6 +7,7 @@ import time
 import MySQLdb
 
 f = open('nfl-dfs/weekinfo.txt', 'r')
+# f = open('weekinfo.txt', 'r')             ### Local
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 
@@ -55,11 +56,42 @@ def getPlayerProj(weekNum, position, playerList):
         else:
             for i in range(0,5):
                 player.insert(5,0.00)
-                
+        
+        dkscore = fantasyscore(player)[0]
+        fdscore = fantasyscore(player)[1]
+        player.append(dkscore)
+        player.append(fdscore)    
         playerList.append(player)
         player = []
     
     return playerList
+
+def fantasyscore(player):
+    
+    passbonus = 0
+    recbonus = 0
+    rushbonus = 0
+    
+    if float(player[7]) >= 300.0:
+        passbonus = 1
+    if float(player[11]) >= 100.0:
+        rushbonus = 1
+    if float(player[14]) >= 100.0:
+        recbonus = 1
+        
+    dkscore = (float(player[8]) * 4) + (float(player[7]) * 0.04) - (float(player[9]) * 1) + (float(player[12]) * 6) + \
+    (float(player[11]) * 0.1) + (float(player[15]) * 6) + (float(player[14]) * 0.1) + (float(player[13]) * 1) - \
+    (float(player[16]) * 1) + (passbonus * 3) + (recbonus * 3) + (rushbonus * 3)
+    
+    fdscore = (float(player[8]) * 4) + (float(player[7]) * 0.04) - (float(player[9]) * 1) + (float(player[12]) * 6) + \
+    (float(player[11]) * 0.1) + (float(player[15]) * 6) + (float(player[14]) * 0.1) + (float(player[13]) * 0.5) - \
+    (float(player[16]) * 2)
+    
+    fpts = [round(dkscore,2), round(fdscore,2)]
+    
+    return fpts
+
+
 
 for pos in posSet:
     getPlayerProj(weekNum, pos, playerList)
@@ -81,14 +113,14 @@ for row in playerList:
     with con:
         query = "INSERT INTO fantasypros_wkly_proj (week, pos, player_id, team, playernm_full, \
         pass_att, pass_cmp, pass_yds, pass_td, ints, rush_att, rush_yds, rush_td, rec, rec_yds, \
-        rec_td, fumbles_lost, fpts) \
+        rec_td, fumbles_lost, fpts, dkp, fdp) \
         VALUES (%d, "'"%s"'", %d, "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, \
-        %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
+        %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
         (int(row[0]), row[1], int(row[2]), row[3], row[4], \
         round(float(row[5]),2), round(float(row[6]),2), round(float(row[7]),2), round(float(row[8]),2), \
         round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), \
         round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2), round(float(row[15]),2), \
-        round(float(row[16]),2), round(float(row[17]),2))
+        round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2))
         x = con.cursor()
         x.execute(query)
 
