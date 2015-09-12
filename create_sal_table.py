@@ -3,8 +3,8 @@
 import MySQLdb
 import csv
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 
 f = open('nfl-dfs/weekinfo.txt', 'r')

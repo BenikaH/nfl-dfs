@@ -9,11 +9,11 @@ import smtplib
 from email.mime.text import MIMEText
 from email.MIMEMultipart import MIMEMultipart
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-f = open('weekinfo.txt', 'r')             ### Local
+f = open('nfl-dfs/weekinfo.txt', 'r')
+# f = open('weekinfo.txt', 'r')             ### Local
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 send = ftext[1]
