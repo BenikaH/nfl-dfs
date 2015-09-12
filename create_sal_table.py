@@ -1,3 +1,5 @@
+#!/usr/local/bin/python2.7
+
 import MySQLdb
 import csv
 
@@ -5,7 +7,10 @@ con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost
 # con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 
-weekNum = 1
+f = open('nfl-dfs/weekinfo.txt', 'r')
+# f = open('weekinfo.txt', 'r')             ### Local
+ftext = f.read().split(',')
+weekNum = int(ftext[0])
 
 curWeek = 'week' + str(weekNum)
 if weekNum == 1:

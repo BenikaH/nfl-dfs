@@ -40,7 +40,7 @@ for players in playerSet:
     firstname = playerinfo[0].split(' ',1)[0]
     lastname = playerinfo[0].split(' ',1)[1].strip()
     pos = playerinfo[1].split(',')[0]
-    team = playerinfo[1].split(',')[1][:-1]
+    team = playerinfo[1].split(',')[1][:-1].strip()
     player.append(firstname)
     player.append(lastname)
     player.append(pos)
