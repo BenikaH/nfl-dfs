@@ -19,6 +19,13 @@ weekNum = int(ftext[0])
 send = ftext[1]
 print send
 f.close()
+
+f = open('nfl-dfs/inputfile.txt', 'r')
+# f = open('inputfile.txt', 'r')             ### Local
+ftext = f.read().split(',')
+email = ftext[0]
+pwd = ftext[1]
+f.close()
     
 with con:
     query = 'SELECT nf.week,\
@@ -101,8 +108,8 @@ if send == "Send":
     # me == the sender's email address
     # you == the recipient's email address
     msg['Subject'] = 'Week ' + str(weekNum) + ' Output File'
-    msg['From'] = 'Ryan.Murray4@gmail.com'
-    msg['To'] = 'Ryan.Murray4@gmail.com'
+    msg['From'] = email
+    msg['To'] = email
 
     me = msg['From']
     you = msg['To']
@@ -112,7 +119,7 @@ if send == "Send":
     server = smtplib.SMTP("smtp.gmail.com:587")
     server.ehlo()
     server.starttls()
-    server.login("Ryan.Murray4@gmail.com", "Syracuse#44")
+    server.login(email, pwd)
  
     server.sendmail(msg['From'], msg['To'] , msg.as_string())
     server.close()
