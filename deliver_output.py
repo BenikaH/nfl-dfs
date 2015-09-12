@@ -22,7 +22,6 @@ f.close()
     
 with con:
     query = 'SELECT nf.week,\
-    nf.team,\
     rgo.game_date,\
     concat(nf.playernm_first, " ", nf.playernm_last) as playernm_full,\
     nf.pos,\
