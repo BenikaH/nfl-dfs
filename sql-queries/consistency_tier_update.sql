@@ -15,8 +15,8 @@ from
 	player_id,
 	playernm_full,
 	pos,
-	case when fdp/fd_salary * 1000 >= 3 then 2
-	when fdp/fd_salary * 1000 >= 1.5 then 1
+	case when fdp/fd_salary * 1000 >= 1.7 then 2	-- 67%
+	when fdp/fd_salary * 1000 >= 0.7 then 1 -- 33%
 	else 0
 	end as consrate
 	from `dfs_results_2014`
@@ -37,8 +37,8 @@ from
 	player_id,
 	playernm_full,
 	pos,
-	case when dkp/dk_salary * 1000 >= 3 then 2
-	when dkp/dk_salary * 1000 >= 1.5 then 1
+	case when dkp/dk_salary * 1000 >= 2.7 then 2 -- 67%
+	when dkp/dk_salary * 1000 >= 0.95 then 1 -- 25%
 	else 0
 	end as consrate
 	from `dfs_results_2014`
