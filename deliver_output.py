@@ -20,12 +20,13 @@ send = ftext[1]
 print send
 f.close()
 
-f = open('nfl-dfs/inputfile.txt', 'r')
-# f = open('inputfile.txt', 'r')             ### Local
-ftext = f.read().split(',')
-email = ftext[0]
-pwd = ftext[1]
-f.close()
+if send == "Send":
+    f = open('nfl-dfs/inputfile.txt', 'r')
+    # f = open('inputfile.txt', 'r')             ### Local
+    ftext = f.read().split(',')
+    email = ftext[0]
+    pwd = ftext[1]
+    f.close()
     
 with con:
     query = 'SELECT nf.week,\
