@@ -8,8 +8,8 @@ import MySQLdb
 headerList = ['playerID', 'pos', 'FullName', 'Lastname', 'Firstname', 'Team', 'Opp', 'Spread', 'OverUnder', 'ML', 'DKSalary', \
             'DKP', 'DKValue', 'FDSalary', 'FDP', 'FDValue', 'webLink']
 
-# f = open('weekinfo.txt', 'r')             ### Local
-f = open('nfl-dfs/weekinfo.txt', 'r')
+f = open('weekinfo.txt', 'r')             ### Local
+# f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 
@@ -102,9 +102,23 @@ for player in playerList:
         player.insert(3, '')
         player.insert(3, '')
 
+kicker = []
+for player in fdplayerList:
+    if player[1] == 'K':
+        plname = player[2].split(', ')
+        if len(plname) == 2:
+            player.insert(3, plname[0])
+            player.insert(3, plname[1])
+        else:
+            player.insert(3, '')
+            player.insert(3, '')
+        player.insert(0, weekNum)
+        kicker.append(player)
+print kicker
 
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+
+con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM rotowire_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()
@@ -120,5 +134,25 @@ for row in playerList:
                 (weekNum, int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], \
                 row[7], row[8], row[9], int(row[10]), round(float(row[11]),2), round(float(row[12]),2), \
                 int(row[13]), round(float(row[14]),2), round(float(row[15]),2), row[16])
+        x = con.cursor()
+        x.execute(query)
+
+
+##### Kicker Table
+
+query = "DELETE FROM rwkickers_wkly_proj WHERE week = %d" % (weekNum)
+x = con.cursor()
+x.execute(query)
+
+for row in kicker:
+    print row
+    with con:
+        query = "INSERT INTO rwkickers_wkly_proj (week, player_id, pos, playernm_full, playernm_last, playernm_first, \
+            team, opp, spread, over_under, ml, fd_salary, fdp, fd_value, weblink) \
+                VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                %1.2f, %1.2f, %d, %d, %1.2f, %1.2f, "'"%s"'")" % \
+                (int(row[0]), int(row[1]), row[2], row[3], row[4], row[5], row[6], \
+                row[7], round(float(row[8]),2), round(float(row[9]),2), int(row[10]), int(row[11]), round(float(row[12]),2), \
+                round(float(row[13]),2), row[14])
         x = con.cursor()
         x.execute(query)
