@@ -8,8 +8,8 @@ import MySQLdb
 headerList = ['playerID', 'pos', 'FullName', 'Lastname', 'Firstname', 'Team', 'Opp', 'Spread', 'OverUnder', 'ML', 'DKSalary', \
             'DKP', 'DKValue', 'FDSalary', 'FDP', 'FDValue', 'webLink']
 
-f = open('weekinfo.txt', 'r')             ### Local
-# f = open('nfl-dfs/weekinfo.txt', 'r')
+# f = open('weekinfo.txt', 'r')             ### Local
+f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])
 
@@ -117,8 +117,8 @@ for player in fdplayerList:
 print kicker
 
 
-con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM rotowire_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()
