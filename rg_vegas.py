@@ -134,8 +134,8 @@ for row in gameinfo:
     with con:
         query = "INSERT INTO rotogrinders_odds (week, game_date, game_time, home_away, team, opp, team_spread, \
             opp_spread, total_pts, team_proj, opp_proj, team_proj_open, opp_proj_open, team_proj_chg, opp_proj_chg) \
-            VALUES (%d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
-            (int(row[0]), row[1], row[2], row[3], row[4], row[5], round(float(row[6]),2), round(float(row[7]),2), \
-            round(float(row[8]),2), round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2))
+            VALUES (%d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" % \
+            (int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7], \
+            row[8], row[9], row[10], row[11], row[12], row[13], row[14])
         x = con.cursor()
         x.execute(query)
