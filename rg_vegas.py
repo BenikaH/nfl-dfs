@@ -29,6 +29,8 @@ with con:
     else:
         firstPull = 'y'
 
+firstPull = 'y'         ### TEMPORARY TO SOLVE ISSUE
+
 if firstPull.lower() != 'y':
 
     pastresults = []
