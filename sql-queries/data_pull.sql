@@ -50,12 +50,12 @@ LEFT JOIN foxsports_wkly_proj fs on fs.player_id = map.foxsports_id and fs.week 
 LEFT JOIN espn_wkly_proj e on e.player_id = map.espn_id and e.week = 1
 LEFT JOIN cbssports_wkly_proj c on c.player_id = map.cbssports_id and c.week = 1
 LEFT JOIN team_map tm on nf.team = tm.nf_team
-LEFT JOIN rotogrinders_odds rgo on rgo.team = tm.rg_team
+LEFT JOIN rotogrinders_odds rgo on rgo.team = tm.rg_team and rgo.week = 1
 LEFT JOIN weekly_salaries_dk dks on dks.player_id = nf.player_id
 LEFT JOIN weekly_salaries_fd fds on fds.player_id = nf.player_id
 LEFT JOIN (select dk_salary, sum(points)/sum(players) as avg_dkp from v_dk_salary_stats group by 1) vdk on vdk.dk_salary = nf.dk_salary
 LEFT JOIN (select fd_salary, sum(points)/sum(players) as avg_fdp from v_fd_salary_stats group by 1) vfd on vfd.fd_salary = nf.fd_salary
-LEFT JOIN (select distinct player_id from dfs_results_2014) guru on guru.player_id= map.rotoguru_id
+LEFT JOIN (select distinct player_id from v_rotoguru_historicals) guru on guru.player_id= map.rotoguru_id
 LEFT JOIN consistency_tiers cons on cons.player_id = guru.player_id
 
 WHERE nf.week = 1

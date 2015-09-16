@@ -89,10 +89,14 @@ def getweeklyresults(weekNm):
                 continue
     return playerList
 
-i = 1
+# f = open('weekinfo.txt', 'r')             ### Local
+f = open('nfl-dfs/weekinfo.txt', 'r')
+ftext = f.read().split(',')
+weekNum = int(ftext[0])
+
 masterList = []
 
-weeklyresult = getweeklyresults(i)
+weeklyresult = getweeklyresults(weekNum)
 # for i in range(1,18):
 #     weeklyresult = getweeklyresults(i)
 
