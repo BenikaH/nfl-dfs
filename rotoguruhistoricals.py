@@ -13,7 +13,6 @@ def getweeklyresults(weekNm):
     r = requests.get("http://rotoguru1.com/cgi-bin/fyday.pl?week=" + str(weekNm) + "&game=dk").text
 
     soup = BeautifulSoup(r)
-
     playerSet = soup.find_all("tr")
     boldind = []
     playerSet = [t for t in playerSet if (not t.find_all("hr"))]
@@ -26,7 +25,7 @@ def getweeklyresults(weekNm):
     
     # get list of positions and indexes
     boldind1 = boldind[0]
-    boldind = [i-boldind.index(i) for i in boldind[1:]]
+    boldind = [i-boldind.index(i)-1 for i in boldind[1:]]
     boldind[-1] = boldind[-1] - 1               ## Adjusts for Kicker
     boldind.insert(0,boldind1)
     
@@ -34,7 +33,7 @@ def getweeklyresults(weekNm):
     counter = 0
     playerList = []
     player = []
-    for players in userows[5:]:
+    for players in userows[6:]:
         if userows.index(players) in boldind[1:]:   ### To indicate the current position
             counter += 1
         player.append(weekNm)       # Add week number to each player line
@@ -68,7 +67,7 @@ def getweeklyresults(weekNm):
 
     fdplayerList = []
     player = []
-    for players in userows[5:]:
+    for players in userows[6:]:
         if userows.index(players) in boldind:
             counter += 1
         player.append(weekNm)       # Add week number to each player line
@@ -90,15 +89,16 @@ def getweeklyresults(weekNm):
                 continue
     return playerList
 
-weekNm = 1
+i = 1
 masterList = []
 
-for i in range(1,18):
-    weeklyresult = getweeklyresults(i)
+weeklyresult = getweeklyresults(i)
+# for i in range(1,18):
+#     weeklyresult = getweeklyresults(i)
 
-    for row in weeklyresult:
-        masterList.append(row)
-    print "Week %d Complete" % (i)
+for row in weeklyresult:
+    masterList.append(row)
+print "Week %d Complete" % (i)
 
 for row in masterList:
     row[1] = int(row[1])
@@ -116,12 +116,12 @@ for row in masterList:
 listlen = len(masterList)
 print masterList
 #
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 for row in masterList:
     with con:
-        query = "INSERT INTO dfs_results_2014 (week, player_id, playernm_full, team, opp, dkp, dk_salary, playernm_last, playernm_first, fdp, fd_salary, pos) \
+        query = "INSERT INTO dfs_results_2015 (week, player_id, playernm_full, team, opp, dkp, dk_salary, playernm_last, playernm_first, fdp, fd_salary, pos) \
         VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %d, "'"%s"'", "'"%s"'", %1.2f, %d, "'"%s"'")" % (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
         x = con.cursor()
         x.execute(query)
