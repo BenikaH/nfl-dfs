@@ -19,7 +19,7 @@ from
 	when fdp/fd_salary * 1000 >= 0.7 then 1 -- 33%
 	else 0
 	end as consrate
-	from `dfs_results_2014`
+	from `v_rotoguru_historicals`
 	where fdp <> 0 and pos <> 'D') a
 group by 1,2,3) fd_cons
 
@@ -41,7 +41,7 @@ from
 	when dkp/dk_salary * 1000 >= 0.95 then 1 -- 25%
 	else 0
 	end as consrate
-	from `dfs_results_2014`
+	from `v_rotoguru_historicals`
 	where dkp <> 0 and pos <> 'D') b
 group by 1,2,3) dk_cons
 

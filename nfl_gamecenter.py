@@ -19,19 +19,23 @@ def getgameids(week, year):
     root = ET.fromstring(r)
 
     gms = root[0]
+    xmlist = ['eid', 'd', 't', 'q', 'h', 'hnn', 'hs', 'v', 'vnn', 'vs']
+    gametemp = {}
     gameids = []
     try:
         for g in gms:
-            gameids.append(g.get('eid'))
+            for l in xmlist:
+                gametemp[l] = g.get(l)
+            gameids.append(gametemp)
     except:
         print "error"
     
     return gameids
 
-def gamelist(week, year):
+def gamelist(weeks, years):
     gameList = []
-    for season in Years:
-        for weekNum in Weeks:
+    for season in years:
+        for weekNum in weeks:
             games = getgameids(weekNum, season)
             for game in games:
                 gameList.append(game)
@@ -60,7 +64,7 @@ def getplayerid(player_gsis):       ### Returns the player ID based on gsis ID f
 def searchforid(player_gsis):
     return player_gsis
 
-def getgamedata(game_id):
+def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
     
     passkeys = ['att', 'cmp', 'yds', 'tds', 'ints', 'twopta', 'twoptm']
     passkeynm = ['pass_att', 'pass_cmp', 'pass_yds', 'pass_td', 'ints', 'pass_twopta', 'pass_twoptm']
@@ -70,9 +74,9 @@ def getgamedata(game_id):
     reckeynm = ['rec', 'rec_yds', 'rec_tds', 'rec_lng', 'rec_lngtd', 'rec_twopta', 'rec_twoptm']
     hmaway = ['home', 'away']
     
-    r = requests.get("http://www.nfl.com/liveupdate/game-center/"+game_id+"/"+game_id+"_gtd.json")
+    r = requests.get("http://www.nfl.com/liveupdate/game-center/"+game_id['eid']+"/"+game_id['eid']+"_gtd.json")
     data = r.json()
-    gameinfo = data[game_id]
+    gameinfo = data[game_id['eid']]
     
     gamedict, homekeys, awaykeys = {}, {}, {}
     
@@ -84,11 +88,11 @@ def getgamedata(game_id):
         teamabbr = gameinfo[team]["abbr"]
         
         for key in rushinginfo.keys():          ### Get all the Keys and Names of players
-            gamedict[key] = {"name": rushinginfo[key]["name"], "team": teamabbr, "game_id": game_id}
+            gamedict[key] = {"name": rushinginfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
         for key in recinfo.keys():
-            gamedict[key] = {"name": recinfo[key]["name"], "team": teamabbr, "game_id": game_id}
+            gamedict[key] = {"name": recinfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
         for key in passinfo.keys():
-            gamedict[key] = {"name": passinfo[key]["name"], "team": teamabbr, "game_id": game_id}
+            gamedict[key] = {"name": passinfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
 
 
         for key in gamedict.keys():         #### Get rushing data for each player
@@ -107,7 +111,16 @@ def getgamedata(game_id):
                     gamedict[key][passkeynm[passkeys.index(keynm)]] = passinfo[key][keynm]
                 else:
                     gamedict[key][passkeynm[passkeys.index(keynm)]] = 0
-                    
+            # Add game info to all the players        
+            gamedict[key]['day'] = game_id['d']
+            gamedict[key]['time'] = game_id['t']
+            gamedict[key]['hmteam'] = game_id['h']
+            gamedict[key]['hmscore'] = game_id['hs']
+            gamedict[key]['awteam'] = game_id['v']
+            gamedict[key]['awscore'] = game_id['vs']
+            gamedict[key]['week'] = dateinfo[0]
+            gamedict[key]['year'] = dateinfo[1]
+        
         if team == 'home':
             homedict = gamedict
         else:
@@ -117,14 +130,30 @@ def getgamedata(game_id):
         homedict[keys] = awaydict[keys]
         
     gamedict = homedict
-    
     for key in gamedict:
         #### Need IF statement that only runs this if player ID hasn't been found yet.
         #### Just put all GSIS IDs and Player IDs in a separate dict and reference that.
         #### if idkey in idDict then gamedict[key]["player_id"] = searchforkey(key) else = getplayerid(key)
-        gamedict[key]["player_id"] = getplayerid(key)
-    print gamedict
+        if key not in playerIDdict.keys():
+            gamedict[key]["player_id"] = getplayerid(key)
+            playerIDdict[key] = getplayerid(key)
+        else:
+            gamedict[key]["player_id"] = playerIDdict[key]
+    gamelist.append(gamedict)
+    return gamelist
 
-for i in range(0,2):
-    getgamedata(getgameids(1, 2015)[i])
+playerIDdict = {}
+gamelist = []
+year = 2014
+for week in Weeks[:2]:
+    for i in range(0,2):
+        # week = 1
+        # year = 2015
+        dateinfo = [week, year]
+        gameid = getgameids(dateinfo[0], dateinfo[1])[i]
+        getgamedata(gameid, dateinfo, playerIDdict, gamelist)
+    print year, ": week ", week, " complete"
+    time.sleep(2)
+
+print gamelist
                     
