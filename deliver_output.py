@@ -56,10 +56,11 @@ with con:
     e.fdp as e_fdp,\
     c.dkp as c_dkp,\
     c.fdp as c_fdp,\
-    rgo.team_spread,\
-    rgo.total_pts,\
-    rgo.team_proj,\
-    rgo.team_proj_chg,\
+    p.spread,\
+    p.total,\
+    p.teamtotal,\
+    p.spread_chg,\
+    p.teamtotal_chg,\
     vdk.avg_dkp,\
     vfd.avg_fdp,\
     cons.toptier_dk,\
@@ -79,6 +80,7 @@ with con:
     LEFT JOIN cbssports_wkly_proj c on c.player_id = map.cbssports_id and c.week = %d\
     LEFT JOIN team_map tm on nf.team = tm.nf_team\
     LEFT JOIN rotogrinders_odds rgo on rgo.team = tm.rg_team and rgo.week = %d\
+    LEFT JOIN pinnacle_odds p on p.team = tm.pinnacle_team and p.week = %d\
     LEFT JOIN weekly_salaries_dk dks on dks.player_id = nf.player_id\
     LEFT JOIN weekly_salaries_fd fds on fds.player_id = nf.player_id\
     LEFT JOIN (select dk_salary, sum(points)/sum(players) as avg_dkp from v_dk_salary_stats group by 1) vdk on vdk.dk_salary = nf.dk_salary\
@@ -87,7 +89,7 @@ with con:
     LEFT JOIN consistency_tiers cons on cons.player_id = guru.player_id\
     \
     WHERE nf.week = %d\
-    ORDER BY nf.dk_salary DESC;' % (weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum)
+    ORDER BY nf.dk_salary DESC;' % (weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum)
     x = con.cursor()
     x.execute(query)
 
