@@ -35,7 +35,7 @@ game = []
 gameList = []
 for event in events:
 
-    if event['Totals']:
+    if event['Totals'] and event['PeriodNumber'] == 0:      ### Only get Full Game Line (fix this later!)
         total = float(event['Totals']['Min'])
         
         print '\n', event['EventId']
@@ -74,7 +74,6 @@ holder = []
 gameinfo = []
 
 for game in gameList:
-    print game
     holder = [game[i] for i in hmorder]  # List method to put items into home team order
     holder.insert(0, weekNum)
     holder.insert(3, 'Home')             # Add 'Home' to home teams
@@ -82,6 +81,7 @@ for game in gameList:
     holder = [game[i] for i in aworder]  # List method to put items into away team order
     holder.insert(0, weekNum)
     holder.insert(3, 'Away')             # Add 'Away' to away teams
+    print holder
     gameinfo.append(holder)
 
 # If this isn't the first run, calculate the change and insert into the list
@@ -95,8 +95,11 @@ if not firstPull:
         holder = []
     
     for game in gameinfo:
+        for i in range(0,6):
+            game.insert(15, 0.00)
         for past in pastresults:
             if game[1] == past[2]:
+                print past
                 game[15] = past[16]      # teamtotal_open
                 game[16] = past[17]      # spread_open
                 game[17] = past[18]      # total_open
