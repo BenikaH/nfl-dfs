@@ -4,10 +4,11 @@ try:
 except ImportError:
     import xml.etree.ElementTree as ET
 
-
+from bs4 import BeautifulSoup
 import requests
 import re
 import time
+import csv
 
 Years = ['2013','2014','2015']
 Weeks = [x for x in xrange(1,18)]
@@ -27,21 +28,22 @@ def getgameids(week, year):
             for l in xmlist:
                 gametemp[l] = g.get(l)
             gameids.append(gametemp)
+            gametemp = {}
+
     except:
         print "error"
-    
     return gameids
 
-def gamelist(weeks, years):
-    gameList = []
-    for season in years:
-        for weekNum in weeks:
-            games = getgameids(weekNum, season)
-            for game in games:
-                gameList.append(game)
-            print "Week %s Complete - Year %s" % (str(weekNum), season)
-        time.sleep(1)
-    return gameList
+# def gamelist(weeks, years):
+#     gameList = []
+#     for season in years:
+#         for weekNum in weeks:
+#             games = getgameids(weekNum, season)
+#             for game in games:
+#                 gameList.append(game)
+#             print "Week %s Complete - Year %s" % (str(weekNum), season)
+#         time.sleep(1)
+#     return gameList
 
 
 #### 
@@ -59,7 +61,19 @@ def getplayerid(player_gsis):       ### Returns the player ID based on gsis ID f
     r = requests.get("http://www.nfl.com/players/profile?id="+str(player_gsis))
     urlnm = r.url
     m = re.search('/([0-9]+)/', urlnm)
-    return None if m is None else int(m.group(1))
+    soup = BeautifulSoup(r.text)
+    
+    playerinfo = soup.find("div", {"class" : "player-info"})
+    spans = playerinfo.find_all("span")
+    playernm = spans[0].text.strip()
+    if len(spans) < 2:
+        playerpos = None
+    else:
+        playerpos = spans[1].text.strip().split()[1]
+    
+    plinfo = [int(m.group(1)), urlnm, playernm, playerpos]
+
+    return None if m is None else plinfo
 
 def searchforid(player_gsis):
     return player_gsis
@@ -135,25 +149,66 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
         #### Just put all GSIS IDs and Player IDs in a separate dict and reference that.
         #### if idkey in idDict then gamedict[key]["player_id"] = searchforkey(key) else = getplayerid(key)
         if key not in playerIDdict.keys():
-            gamedict[key]["player_id"] = getplayerid(key)
-            playerIDdict[key] = getplayerid(key)
+            playerdtl = getplayerid(key)
+            gamedict[key]["player_id"] = playerdtl[0]
+            playerIDdict[key] = {'player_id': playerdtl[0], 'url': playerdtl[1], 'name': playerdtl[2], 'pos': playerdtl[3]} 
         else:
             gamedict[key]["player_id"] = playerIDdict[key]
     gamelist.append(gamedict)
     return gamelist
 
-playerIDdict = {}
+def saveplayerdict(playerIDdict):
+    dictlist = []
+    headers = ['gsis_id', 'player_id', 'name', 'pos', 'url']
+    # myfile = open('nfl-dfs/nflplayerids.csv', 'w+')
+    # myfile.close()
+    for key in playerIDdict.keys():
+        newdict = {'gsis_id': key, 'player_id': playerIDdict[key]['player_id'], 'name': playerIDdict[key]['name'], \
+        'pos': playerIDdict[key]['pos'], 'url': playerIDdict[key]['url']}
+        dictlist.append(newdict)
+        newdict = {}
+    with open('nflplayerids.csv', 'wb') as f:
+        w = csv.DictWriter(f, fieldnames=headers)
+        w.writeheader()
+        w.writerows(dictlist)
+    print "playerlist saved to file"
+    return
+
+def openplayerdict():
+    masterlist = []
+    playerIDdict = {}
+    with open('nflplayerids.csv') as f:
+        w = csv.DictReader(f)
+        for row in w:
+            masterlist.append(row)
+        for row in masterlist:
+            playerIDdict[row['gsis_id']] = {'player_id': row['player_id'], 'name': row['name'], \
+                                            'pos': row['pos'], 'url': row['url']}
+    return playerIDdict
+            
+
+playerIDdict = openplayerdict()
 gamelist = []
 year = 2014
-for week in Weeks[:2]:
-    for i in range(0,2):
-        # week = 1
-        # year = 2015
-        dateinfo = [week, year]
-        gameid = getgameids(dateinfo[0], dateinfo[1])[i]
+# for week in Weeks[:2]:
+#     for i in range(0,2):
+#         # week = 1
+#         # year = 2015
+#         dateinfo = [week, year]
+#         gameid = getgameids(dateinfo[0], dateinfo[1])[i]
+#         getgamedata(gameid, dateinfo, playerIDdict, gamelist)
+#     print year, ": week ", week, " complete"
+#     time.sleep(2)
+
+
+
+for week in Weeks[:3]:
+    dateinfo = [week, year]
+    for gameid in getgameids(dateinfo[0], dateinfo[1]):
+        print gameid
         getgamedata(gameid, dateinfo, playerIDdict, gamelist)
     print year, ": week ", week, " complete"
-    time.sleep(2)
+    time.sleep(1)
 
-print gamelist
+saveplayerdict(playerIDdict)
                     
