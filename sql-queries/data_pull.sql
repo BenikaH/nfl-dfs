@@ -44,7 +44,7 @@ cons.lowtier_fd
 FROM
 numberfire_wkly_proj nf
 LEFT JOIN player_map map on nf.player_id = map.numberfire_id
-LEFT JOIN rotowire_wkly_proj rw on rw.player_id = map.rotowire_id and rw.week = 2
+LEFT JOIN (select distinct player_id, week, dkp, fdp from rotowire_wkly_proj) rw on rw.player_id = map.rotowire_id and rw.week = 2
 LEFT JOIN rotogrinders_wkly_proj rg on rg.player_id = map.rotogrinders_id and rg.week = 2
 LEFT JOIN fantasypros_wkly_proj fp on fp.player_id = map.fantasypros_id and fp.week = 2
 LEFT JOIN foxsports_wkly_proj fs on fs.player_id = map.foxsports_id and fs.week = 2
@@ -58,7 +58,7 @@ LEFT JOIN weekly_salaries_fd fds on fds.player_id = nf.player_id
 LEFT JOIN (select dk_salary, sum(points)/sum(players) as avg_dkp from v_dk_salary_stats group by 1) vdk on vdk.dk_salary = nf.dk_salary
 LEFT JOIN (select fd_salary, sum(points)/sum(players) as avg_fdp from v_fd_salary_stats group by 1) vfd on vfd.fd_salary = nf.fd_salary
 LEFT JOIN (select distinct player_id from v_rotoguru_historicals) guru on guru.player_id= map.rotoguru_id
-LEFT JOIN consistency_tiers cons on cons.player_id = guru.player_id
+LEFT JOIN (select distinct player_id, toptier_dk, midtier_dk, lowtier_dk, toptier_fd, midtier_fd, lowtier_fd from consistency_tiers) cons on cons.player_id = guru.player_id
 
 WHERE nf.week = 2
 ORDER BY nf.dk_salary DESC;
