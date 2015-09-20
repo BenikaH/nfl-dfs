@@ -96,10 +96,10 @@ if not firstPull:
     
     for game in gameinfo:
         for past in pastresults:
-            if game[1] == pull[2]:
-                game[15] = pull[16]      # teamtotal_open
-                game[16] = pull[17]      # spread_open
-                game[17] = pull[18]      # total_open
+            if game[1] == past[2]:
+                game[15] = past[16]      # teamtotal_open
+                game[16] = past[17]      # spread_open
+                game[17] = past[18]      # total_open
                 game[18] = float(game[7]) - float(game[15])      # teamtotal_chg
                 game[19] = float(game[5]) - float(game[16])      # spread_chg
                 game[20] = float(game[14]) - float(game[17])      # total_chg
