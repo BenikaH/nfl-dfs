@@ -123,6 +123,10 @@ print masterList
 # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
 con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
+query = "DELETE FROM dfs_results_2015 WHERE week = %d" % (weekNum)
+x = con.cursor()
+x.execute(query)
+
 for row in masterList:
     with con:
         query = "INSERT INTO dfs_results_2015 (week, player_id, playernm_full, team, opp, dkp, dk_salary, playernm_last, playernm_first, fdp, fd_salary, pos) \
