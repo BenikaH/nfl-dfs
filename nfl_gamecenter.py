@@ -232,8 +232,8 @@ def tableinsert(gamelist):
     # url -- ['player_id']['url']
     
     ### Open connection
-    con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-    # con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+    # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
     
     # Remove data with same year -- no dupes
     query = "DELETE FROM nfl_gamecenter where year = %d" % (year)
