@@ -11,7 +11,7 @@ import time
 import csv
 import MySQLdb
 
-Years = ['2013','2014','2015']
+Years = [2013,2014]
 Weeks = [x for x in xrange(1,18)]
 
 ### Need the function to bring in all information about each indivdual game and store it
@@ -319,7 +319,7 @@ def tableinsert(gamelist):
 
 playerIDdict = openplayerdict()
 gamelist = []
-year = 2014
+# year = 2014
 # for week in Weeks[:2]:
 #     for i in range(0,2):
 #         # week = 1
@@ -331,15 +331,15 @@ year = 2014
 #     time.sleep(2)
 
 
-
-for week in Weeks:
-    dateinfo = [week, year]
-    for gameid in getgameids(dateinfo[0], dateinfo[1]):
-        print gameid
-        getgamedata(gameid, dateinfo, playerIDdict, gamelist)
+for year in Years:
+    for week in Weeks:
+        dateinfo = [week, year]
+        for gameid in getgameids(dateinfo[0], dateinfo[1]):
+            print gameid
+            getgamedata(gameid, dateinfo, playerIDdict, gamelist)
         
-    print year, ": week ", week, " complete"
-    time.sleep(2)
+        print year, ": week ", week, " complete"
+        time.sleep(2)
 
 saveplayerdict(playerIDdict)
 
