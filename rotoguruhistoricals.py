@@ -92,7 +92,7 @@ def getweeklyresults(weekNm):
 # f = open('weekinfo.txt', 'r')             ### Local
 f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
-weekNum = int(ftext[0])
+weekNum = int(ftext[0])-1
 
 masterList = []
 
@@ -102,7 +102,7 @@ weeklyresult = getweeklyresults(weekNum)
 
 for row in weeklyresult:
     masterList.append(row)
-print "Week %d Complete" % (i)
+# print "Week %d Complete" % (i)
 
 for row in masterList:
     row[1] = int(row[1])

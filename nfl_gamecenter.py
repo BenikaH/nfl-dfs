@@ -202,13 +202,13 @@ year = 2014
 
 
 
-for week in Weeks[:3]:
+for week in Weeks:
     dateinfo = [week, year]
     for gameid in getgameids(dateinfo[0], dateinfo[1]):
         print gameid
         getgamedata(gameid, dateinfo, playerIDdict, gamelist)
     print year, ": week ", week, " complete"
-    time.sleep(1)
+    time.sleep(2)
 
 saveplayerdict(playerIDdict)
                     
