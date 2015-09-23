@@ -98,7 +98,7 @@ if not firstPull:
         for i in range(0,6):
             game.insert(15, 0.00)
         for past in pastresults:
-            if game[1] == past[2]:
+            if game[1] == past[2] and game[2] == past[3]:
                 print past
                 game[15] = past[16]      # teamtotal_open
                 game[16] = past[17]      # spread_open

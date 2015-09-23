@@ -9,6 +9,7 @@ import requests
 import re
 import time
 import csv
+import MySQLdb
 
 Years = ['2013','2014','2015']
 Weeks = [x for x in xrange(1,18)]
@@ -55,8 +56,6 @@ def getgameids(week, year):
 # Gather it into a dictionary based on GSIS
 # Later go through all the GSIS IDs to get all the information on each player
 
-
-
 def getplayerid(player_gsis):       ### Returns the player ID based on gsis ID from Game Center
     r = requests.get("http://www.nfl.com/players/profile?id="+str(player_gsis))
     urlnm = r.url
@@ -81,7 +80,7 @@ def searchforid(player_gsis):
 def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
     
     passkeys = ['att', 'cmp', 'yds', 'tds', 'ints', 'twopta', 'twoptm']
-    passkeynm = ['pass_att', 'pass_cmp', 'pass_yds', 'pass_td', 'ints', 'pass_twopta', 'pass_twoptm']
+    passkeynm = ['pass_att', 'pass_cmp', 'pass_yds', 'pass_tds', 'ints', 'pass_twopta', 'pass_twoptm']
     rushkeys = ['att', 'yds', 'tds', 'lng', 'lngtd', 'twopta', 'twoptm']
     rushkeynm = ['rush_att', 'rush_yds', 'rush_tds', 'rush_lng', 'rush_lngtd', 'rush_twopta', 'rush_twoptm']
     reckeys = ['rec', 'yds', 'tds', 'lng', 'lngtd', 'twopta', 'twoptm']
@@ -145,13 +144,11 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
         
     gamedict = homedict
     for key in gamedict:
-        #### Need IF statement that only runs this if player ID hasn't been found yet.
-        #### Just put all GSIS IDs and Player IDs in a separate dict and reference that.
-        #### if idkey in idDict then gamedict[key]["player_id"] = searchforkey(key) else = getplayerid(key)
         if key not in playerIDdict.keys():
             playerdtl = getplayerid(key)
             gamedict[key]["player_id"] = playerdtl[0]
-            playerIDdict[key] = {'player_id': playerdtl[0], 'url': playerdtl[1], 'name': playerdtl[2], 'pos': playerdtl[3]} 
+            playerIDdict[key] = {'player_id': playerdtl[0], 'url': playerdtl[1], 'name': playerdtl[2], \
+                                'pos': playerdtl[3]} 
         else:
             gamedict[key]["player_id"] = playerIDdict[key]
     gamelist.append(gamedict)
@@ -186,6 +183,139 @@ def openplayerdict():
                                             'pos': row['pos'], 'url': row['url']}
     return playerIDdict
             
+def tableinsert(gamelist):
+    
+    # {u'00-0025425': {'pass_twopta': 0, 'rec_tds': 0, 'pass_twoptm': 0, 'year': 2014, \
+    # 'player_id': {'player_id': '2507170', 'url': 'http://www.nfl.com/player/zachmiller/2507170/profile', \
+    # 'name': 'Zach Miller', 'pos': ''}, 'rec_twopta': 0, 'awscore': '16', 'ints': 0, 'game_id': '2014090400', \
+    # 'rec_twoptm': 0, 'pass_att': 0, 'rush_yds': 0, 'pass_cmp': 0, 'rec_lngtd': 0, 'awteam': 'GB', \
+    # 'hmteam': 'SEA', 'rush_att': 0, 'day': 'Thu', 'rush_lngtd': 0, 'pass_yds': 0, 'rec': 3, \
+    # 'week': 1, 'time': '8:30', 'rush_tds': 0, 'rush_twopta': 0, 'rec_lng': 24, 'rush_twoptm': 0, \
+    # 'rush_lng': 0, 'name': u'Z.Miller', 'pass_td': 0, 'hmscore': '36', 'team': u'SEA', 'rec_yds': 42}
+    #
+    # year -- year
+    # week -- week
+    # start_time -- time
+    # day -- day
+    # game_id -- game_id
+    # gsis_id -- key
+    # player_id -- ['player_id']['player_id']
+    # playernm_full -- ['player_id']['name']
+    # playernm_gsis -- name
+    # pos -- ['player_id']['pos']
+    # team -- team
+    # hmteam -- hmteam
+    # awteam -- awteam
+    # hmscore -- hmscore
+    # awscore -- awscore
+    # pass_cmp
+    # pass_att
+    # pass_yds
+    # pass_td
+    # ints
+    # pass_twopta
+    # pass_twoptm
+    # rush_att
+    # rush_yds
+    # rush_tds
+    # rush_lng
+    # rush_lngtd
+    # rush_twopta
+    # rush_twoptm
+    # rec
+    # rec_yds
+    # rec_tds
+    # rec_lng
+    # rec_lngtd
+    # rec_twopta
+    # rec_twoptm
+    # url -- ['player_id']['url']
+    
+    ### Open connection
+    con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+    # con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+    
+    # Remove data with same year -- no dupes
+    query = "DELETE FROM nfl_gamecenter where year = %d" % (year)
+    x = con.cursor()
+    x.execute(query)
+
+    for player in gamelist:
+        for key in player.keys():
+            if player[key]['team'] == player[key]['hmteam']:
+                home_away = "Home"
+                opp = player[key]['awteam']
+                score = player[key]['hmscore']
+                opp_score = player[key]['awscore']
+            else:
+                home_away = "Away"
+                opp = player[key]['hmteam']
+                score = player[key]['awscore']
+                opp_score = player[key]['hmscore']
+            
+            with con:
+                query = "INSERT INTO nfl_gamecenter (\
+                year, \
+                week, \
+                start_time, \
+                day, \
+                game_id, \
+                gsis_id, \
+                player_id, \
+                playernm_full, \
+                playernm_gsis, \
+                pos, \
+                team, \
+                home_away, \
+                opp, \
+                score, \
+                opp_score, \
+                pass_cmp, \
+                pass_att, \
+                pass_yds, \
+                pass_tds, \
+                ints, \
+                pass_twopta, \
+                pass_twoptm, \
+                rush_att, \
+                rush_yds, \
+                rush_tds, \
+                rush_lng, \
+                rush_lngtd, \
+                rush_twopta, \
+                rush_twoptm, \
+                rec, \
+                rec_yds, \
+                rec_tds, \
+                rec_lng, \
+                rec_lngtd, \
+                rec_twopta, \
+                rec_twoptm, \
+                url) \
+                VALUES ("'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                        "'"%s"'", "'"%s"'")" \
+                        % (player[key]['year'], player[key]['week'], player[key]['time'], player[key]['day'], player[key]['game_id'], \
+                        key, player[key]['player_id']['player_id'], player[key]['player_id']['name'], player[key]['name'], player[key]['player_id']['pos'], \
+                        player[key]['team'], home_away, opp, score, opp_score, \
+                        player[key]['pass_cmp'], player[key]['pass_att'], player[key]['pass_yds'], player[key]['pass_tds'], player[key]['ints'], \
+                        player[key]['pass_twopta'], player[key]['pass_twoptm'], player[key]['rush_att'], player[key]['rush_yds'], player[key]['rush_tds'], \
+                        player[key]['rush_lng'], player[key]['rush_lngtd'], player[key]['rush_twopta'], player[key]['rush_twoptm'], player[key]['rec'], \
+                        player[key]['rec_yds'], player[key]['rec_tds'], player[key]['rec_lng'], player[key]['rec_lngtd'], player[key]['rec_twopta'], \
+                        player[key]['rec_twoptm'], player[key]['player_id']['url'])
+                        
+            x = con.cursor()
+            x.execute(query)
+    
+    print "gamelist inserted into table"
+    return
+
+#### NEED TO BRING IN FUMBLES!!! "fumbles":{"00-0027983":{"name":"R.Moore","tot":1,"rcv":0,"trcv":0,"yds":0,"lost":0},"00-0030246":{"name":"J.Tuggle","tot":0,"rcv":1,"trcv":1,"yds":0,"lost":0}},"kicking":{"00-0029421":{"name":"R.Bullock","fgm":1,"fga":1,"fgyds":43,"totpfg":3,"xpmade":2,"xpmissed":0,"xpa":2,"xpb":0,"xptot":2}},"punting":{"00-0019714":{"name":"S.Lechler","pts":8,"yds":388,"avg":43,"i20":3,"lng":60}},"kickret":{"00-0031932":{"name":"C.Worthy","ret":1,"avg":27,"tds":0,"lng":27,"lngtd":0}},"puntret":{"00-0031600":{"name":"K.Mumphery","ret":6,"avg":9,"tds":0,"lng":15,"lngtd":0}}
 
 playerIDdict = openplayerdict()
 gamelist = []
@@ -207,8 +337,13 @@ for week in Weeks:
     for gameid in getgameids(dateinfo[0], dateinfo[1]):
         print gameid
         getgamedata(gameid, dateinfo, playerIDdict, gamelist)
+        
     print year, ": week ", week, " complete"
     time.sleep(2)
 
 saveplayerdict(playerIDdict)
-                    
+
+
+tableinsert(gamelist)
+
+
