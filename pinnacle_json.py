@@ -42,11 +42,16 @@ for event in events:
         print 'Over Price', event['Totals']['OverPrice']
         print 'Under Price', event['Totals']['UnderPrice']
         print 'Total', event['Totals']['Min']
-        
+
+        gamedate = event['DateAndTime'][:10]
+        gametime = event['DateAndTime'][11:-1]        
         game.append(event['EventId'])
+        game.append(gamedate)
+        game.append(gametime)
         game.append(event['Totals']['OverPrice'])
         game.append(event['Totals']['UnderPrice'])
         game.append(event['Totals']['Min'])
+        
         
         for participants in event['Participants']:
             spread = float(participants['Handicap']['Min'])
@@ -65,11 +70,11 @@ for event in events:
         print game
     game = []
 
-hmorder = [9,4,10,11,12,13,5,6,7,8,1,2,3,0]
-aworder = [4,9,5,6,7,8,10,11,12,13,1,2,3,0]
+hmorder = [11,6,12,13,14,15,7,8,9,10,3,4,5,0,1,2]
+aworder = [6,11,7,8,9,10,12,13,14,15,3,4,5,0,1,2]
 
 headers = ['team', 'opp', 'home_away', 'team_ml', 'team_spread', 'team_odds', 'team_total', 'opp_ml', 'opp_spread' \
-            'opp_odds', 'opp_total', 'overprice', 'underprice', 'total']
+            'opp_odds', 'opp_total', 'overprice', 'underprice', 'total', 'gamedate', 'gametime']
 holder = []
 gameinfo = []
 
@@ -129,12 +134,12 @@ for row in gameinfo:
     with con:
         query = "INSERT INTO pinnacle_odds (week, team, opp, home_away, ml, spread, odds, teamtotal, \
                 opp_ml, opp_spread, opp_odds, opp_total, over_price, under_price, total, teamtotal_open, \
-                spread_open, total_open, teamtotal_chg, spread_chg, total_chg, game_id) \
+                spread_open, total_open, teamtotal_chg, spread_chg, total_chg, game_id, gamedate, gametime) \
                 VALUES ("'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
-                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" % \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" % \
             (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], \
             row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], \
-            row[19], row[20], row[21])
+            row[19], row[20], row[21], row[22], row[23])
         x = con.cursor()
         x.execute(query)
