@@ -89,8 +89,8 @@ def getweeklyresults(weekNm):
                 continue
     return playerList
 
-f = open('weekinfo.txt', 'r')             ### Local
-# f = open('nfl-dfs/weekinfo.txt', 'r')
+# f = open('weekinfo.txt', 'r')             ### Local
+f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
 weekNum = int(ftext[0])-1
 
@@ -120,8 +120,8 @@ for row in masterList:
 listlen = len(masterList)
 print masterList
 #
-con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-# con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 query = "DELETE FROM dfs_results_2015 WHERE week = %d" % (weekNum)
 x = con.cursor()
