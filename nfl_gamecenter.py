@@ -164,7 +164,7 @@ def saveplayerdict(playerIDdict):
         'pos': playerIDdict[key]['pos'], 'url': playerIDdict[key]['url']}
         dictlist.append(newdict)
         newdict = {}
-    with open('nflplayerids.csv', 'wb') as f:
+    with open('nfl-dfs/nflplayerids.csv', 'wb') as f:
         w = csv.DictWriter(f, fieldnames=headers)
         w.writeheader()
         w.writerows(dictlist)
@@ -174,7 +174,7 @@ def saveplayerdict(playerIDdict):
 def openplayerdict():
     masterlist = []
     playerIDdict = {}
-    with open('nflplayerids.csv') as f:
+    with open('nfl-dfs/nflplayerids.csv') as f:
         w = csv.DictReader(f)
         for row in w:
             masterlist.append(row)
