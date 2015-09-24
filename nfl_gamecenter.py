@@ -340,7 +340,7 @@ for year in Years:
             getgamedata(gameid, dateinfo, playerIDdict, gamelist)
         
         print year, ": week ", week, " complete"
-        time.sleep(2)
+        time.sleep(1)
 
 saveplayerdict(playerIDdict)
 
