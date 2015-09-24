@@ -130,10 +130,11 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
                     gamedict[key][passkeynm[passkeys.index(keynm)]] = passinfo[key][keynm]
                 else:
                     gamedict[key][passkeynm[passkeys.index(keynm)]] = 0
-            if key in fumbles:
-                gamedict[key][fumblekeys]['fumbles_lost'] = fumbles[key]['lost']
-            else:
-                gamedict[key][fumblekeys]['fumbles_lost'] = 0
+            for keynm in fumblekeys:
+                if key in fumbles:
+                    gamedict[key][fumblekeys]['fumbles_lost'] = fumbles[key]['lost']
+                else:
+                    gamedict[key][fumblekeys]['fumbles_lost'] = 0
             # Add game info to all the players        
             gamedict[key]['day'] = game_id['d']
             gamedict[key]['time'] = game_id['t']
