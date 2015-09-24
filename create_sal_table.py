@@ -49,7 +49,7 @@ with con:
     sum(week15) as week15_sal,\
     sum(week16) as week16_sal,\
     sum(week17) as week17_sal,\
-    sum(%s) - sum(%s) as week_chg,\
+    case when sum(%s) = 0 then 0 else sum(%s) - sum(%s) end as week_chg,\
     sum(%s) - sum(week1) as season_chg\
     FROM\
     (SELECT player_id, \
@@ -73,7 +73,7 @@ with con:
     case when week = 17 then dk_salary else 0 end as week17\
     from numberfire_wkly_proj) sal\
     GROUP BY 1,2\
-    ORDER BY week1_sal desc);" % (curWeek, prvWeek, curWeek)
+    ORDER BY week1_sal desc);" % (prvWeek, curWeek, prvWeek, curWeek)
     x = con.cursor()
     x.execute(query)
     
@@ -109,7 +109,7 @@ with con:
     sum(week15) as week15_sal,\
     sum(week16) as week16_sal,\
     sum(week17) as week17_sal,\
-    sum(%s) - sum(%s) as week_chg,\
+    case when sum(%s) = 0 then 0 else sum(%s) - sum(%s) end as week_chg,\
     sum(%s) - sum(week1) as season_chg\
     FROM\
     (SELECT player_id, \
@@ -133,7 +133,7 @@ with con:
     case when week = 17 then fd_salary else 0 end as week17\
     from numberfire_wkly_proj) sal\
     GROUP BY 1,2\
-    ORDER BY week1_sal desc);" % (curWeek, prvWeek, curWeek)
+    ORDER BY week1_sal desc);" % (prvWeek, curWeek, prvWeek, curWeek)
     x = con.cursor()
     x.execute(query)
 #
