@@ -149,10 +149,9 @@ for row in kicker:
     with con:
         query = "INSERT INTO rwkickers_wkly_proj (week, player_id, pos, playernm_full, playernm_last, playernm_first, \
             team, opp, spread, over_under, ml, fd_salary, fdp, fd_value, weblink) \
-                VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
-                %1.2f, %1.2f, %d, %d, %1.2f, %1.2f, "'"%s"'")" % \
-                (int(row[0]), int(row[1]), row[2], row[3], row[4], row[5], row[6], \
-                row[7], round(float(row[8]),2), round(float(row[9]),2), int(row[10]), int(row[11]), round(float(row[12]),2), \
-                round(float(row[13]),2), row[14])
+                VALUES ("'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                "'"%s"'", "'"%s"'" "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" % \
+                (row[0], row[1], row[2], row[3], row[4], row[5], row[6], \
+                row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14])
         x = con.cursor()
         x.execute(query)
