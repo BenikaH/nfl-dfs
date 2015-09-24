@@ -11,7 +11,7 @@ import time
 import csv
 import MySQLdb
 
-Years = [2013,2014]
+Years = [2013]
 Weeks = [x for x in xrange(1,18)]
 
 ### Need the function to bring in all information about each indivdual game and store it
@@ -86,6 +86,9 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
     reckeys = ['rec', 'yds', 'tds', 'lng', 'lngtd', 'twopta', 'twoptm']
     reckeynm = ['rec', 'rec_yds', 'rec_tds', 'rec_lng', 'rec_lngtd', 'rec_twopta', 'rec_twoptm']
     hmaway = ['home', 'away']
+    fumblekeys = ['tot', 'rcv', 'trcv', 'yds', 'lost']
+    
+    #### NEED TO BRING IN FUMBLES!!! "fumbles":{"00-0027983":{"name":"R.Moore","tot":1,"rcv":0,"trcv":0,"yds":0,"lost":0},"00-0030246":{"name":"J.Tuggle","tot":0,"rcv":1,"trcv":1,"yds":0,"lost":0}},"kicking":{"00-0029421":{"name":"R.Bullock","fgm":1,"fga":1,"fgyds":43,"totpfg":3,"xpmade":2,"xpmissed":0,"xpa":2,"xpb":0,"xptot":2}},"punting":{"00-0019714":{"name":"S.Lechler","pts":8,"yds":388,"avg":43,"i20":3,"lng":60}},"kickret":{"00-0031932":{"name":"C.Worthy","ret":1,"avg":27,"tds":0,"lng":27,"lngtd":0}},"puntret":{"00-0031600":{"name":"K.Mumphery","ret":6,"avg":9,"tds":0,"lng":15,"lngtd":0}}
     
     r = requests.get("http://www.nfl.com/liveupdate/game-center/"+game_id['eid']+"/"+game_id['eid']+"_gtd.json")
     data = r.json()
@@ -99,6 +102,7 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
         recinfo = gameinfo[team]["stats"]["receiving"]
         passinfo = gameinfo[team]["stats"]["passing"]
         teamabbr = gameinfo[team]["abbr"]
+        fumbles = gameinfo[team]["stats"]["fumbles"]
         
         for key in rushinginfo.keys():          ### Get all the Keys and Names of players
             gamedict[key] = {"name": rushinginfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
@@ -106,6 +110,9 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
             gamedict[key] = {"name": recinfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
         for key in passinfo.keys():
             gamedict[key] = {"name": passinfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
+        for key in fumbles.keys():
+            if not gamedict[key]:
+                gamedict[key] = {"name": fumbles[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
 
 
         for key in gamedict.keys():         #### Get rushing data for each player
@@ -124,6 +131,10 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
                     gamedict[key][passkeynm[passkeys.index(keynm)]] = passinfo[key][keynm]
                 else:
                     gamedict[key][passkeynm[passkeys.index(keynm)]] = 0
+            if key in fumbles:
+                    gamedict[key][fumblekeys]['fumbles_lost'] = fumbles[key]['lost']
+                else:
+                    gamedict[key][fumblekeys]['fumbles_lost'] = 0
             # Add game info to all the players        
             gamedict[key]['day'] = game_id['d']
             gamedict[key]['time'] = game_id['t']
@@ -192,44 +203,6 @@ def tableinsert(gamelist):
     # 'hmteam': 'SEA', 'rush_att': 0, 'day': 'Thu', 'rush_lngtd': 0, 'pass_yds': 0, 'rec': 3, \
     # 'week': 1, 'time': '8:30', 'rush_tds': 0, 'rush_twopta': 0, 'rec_lng': 24, 'rush_twoptm': 0, \
     # 'rush_lng': 0, 'name': u'Z.Miller', 'pass_td': 0, 'hmscore': '36', 'team': u'SEA', 'rec_yds': 42}
-    #
-    # year -- year
-    # week -- week
-    # start_time -- time
-    # day -- day
-    # game_id -- game_id
-    # gsis_id -- key
-    # player_id -- ['player_id']['player_id']
-    # playernm_full -- ['player_id']['name']
-    # playernm_gsis -- name
-    # pos -- ['player_id']['pos']
-    # team -- team
-    # hmteam -- hmteam
-    # awteam -- awteam
-    # hmscore -- hmscore
-    # awscore -- awscore
-    # pass_cmp
-    # pass_att
-    # pass_yds
-    # pass_td
-    # ints
-    # pass_twopta
-    # pass_twoptm
-    # rush_att
-    # rush_yds
-    # rush_tds
-    # rush_lng
-    # rush_lngtd
-    # rush_twopta
-    # rush_twoptm
-    # rec
-    # rec_yds
-    # rec_tds
-    # rec_lng
-    # rec_lngtd
-    # rec_twopta
-    # rec_twoptm
-    # url -- ['player_id']['url']
     
     ### Open connection
     # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
@@ -252,6 +225,30 @@ def tableinsert(gamelist):
                 opp = player[key]['hmteam']
                 score = player[key]['awscore']
                 opp_score = player[key]['hmscore']
+            
+            ##### DKP and FDP
+            if player[key]['pass_yds'] >= 300:
+                passbonus = 1
+            else:
+                passbonus = 0
+            if player[key]['rush_yds'] >= 100:
+                rushbonus = 1
+            else:
+                rushbonus = 0
+            if player[key]['rec_yds'] >= 100:
+                recbonus = 1
+            else:
+                recbonus = 0
+            
+            dkp = (player[key]['pass_yds'] * 0.04) + (player[key]['pass_tds'] * 4) - (player[key]['ints'] * 1) + \
+                    (player[key]['rush_yds'] * 0.1) + (player[key]['rush_tds'] * 6) + (player[key]['rec'] * 1) + \
+                    (player[key]['rec_yds'] * 0.1) + (player[key]['rec_tds'] * 6) + ((passbonus + rushbonus + recbonus) * 3) - \
+                    (player[key]['fumbles_lost'] * 1)
+            
+            fdp = (player[key]['pass_yds'] * 0.04) + (player[key]['pass_tds'] * 4) - (player[key]['ints'] * 1) + \
+                    (player[key]['rush_yds'] * 0.1) + (player[key]['rush_tds'] * 6) + (player[key]['rec'] * 0.5) + \
+                    (player[key]['rec_yds'] * 0.1) + (player[key]['rec_tds'] * 6) - \
+                    (player[key]['fumbles_lost'] * 2)
             
             with con:
                 query = "INSERT INTO nfl_gamecenter (\
@@ -291,6 +288,9 @@ def tableinsert(gamelist):
                 rec_lngtd, \
                 rec_twopta, \
                 rec_twoptm, \
+                fumbles_lost, \
+                dkp, \
+                fdp, \
                 url) \
                 VALUES ("'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
@@ -299,7 +299,7 @@ def tableinsert(gamelist):
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
-                        "'"%s"'", "'"%s"'")" \
+                        "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" \
                         % (player[key]['year'], player[key]['week'], player[key]['time'], player[key]['day'], player[key]['game_id'], \
                         key, player[key]['player_id']['player_id'], player[key]['player_id']['name'], player[key]['name'], player[key]['player_id']['pos'], \
                         player[key]['team'], home_away, opp, score, opp_score, \
@@ -307,7 +307,7 @@ def tableinsert(gamelist):
                         player[key]['pass_twopta'], player[key]['pass_twoptm'], player[key]['rush_att'], player[key]['rush_yds'], player[key]['rush_tds'], \
                         player[key]['rush_lng'], player[key]['rush_lngtd'], player[key]['rush_twopta'], player[key]['rush_twoptm'], player[key]['rec'], \
                         player[key]['rec_yds'], player[key]['rec_tds'], player[key]['rec_lng'], player[key]['rec_lngtd'], player[key]['rec_twopta'], \
-                        player[key]['rec_twoptm'], player[key]['player_id']['url'])
+                        player[key]['rec_twoptm'], player[key]['fumbles_lost'], dkp, fdp, player[key]['player_id']['url'])
                         
             x = con.cursor()
             x.execute(query)
@@ -315,7 +315,6 @@ def tableinsert(gamelist):
     print "gamelist inserted into table"
     return
 
-#### NEED TO BRING IN FUMBLES!!! "fumbles":{"00-0027983":{"name":"R.Moore","tot":1,"rcv":0,"trcv":0,"yds":0,"lost":0},"00-0030246":{"name":"J.Tuggle","tot":0,"rcv":1,"trcv":1,"yds":0,"lost":0}},"kicking":{"00-0029421":{"name":"R.Bullock","fgm":1,"fga":1,"fgyds":43,"totpfg":3,"xpmade":2,"xpmissed":0,"xpa":2,"xpb":0,"xptot":2}},"punting":{"00-0019714":{"name":"S.Lechler","pts":8,"yds":388,"avg":43,"i20":3,"lng":60}},"kickret":{"00-0031932":{"name":"C.Worthy","ret":1,"avg":27,"tds":0,"lng":27,"lngtd":0}},"puntret":{"00-0031600":{"name":"K.Mumphery","ret":6,"avg":9,"tds":0,"lng":15,"lngtd":0}}
 
 playerIDdict = openplayerdict()
 gamelist = []
