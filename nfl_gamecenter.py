@@ -102,7 +102,10 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
         recinfo = gameinfo[team]["stats"]["receiving"]
         passinfo = gameinfo[team]["stats"]["passing"]
         teamabbr = gameinfo[team]["abbr"]
-        fumbles = gameinfo[team]["stats"]["fumbles"]
+        try:
+            fumbles = gameinfo[team]["stats"]["fumbles"]
+        except:
+            fumbles = {}
         
         for key in rushinginfo.keys():          ### Get all the Keys and Names of players
             gamedict[key] = {"name": rushinginfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
