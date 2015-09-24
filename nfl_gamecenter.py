@@ -11,7 +11,7 @@ import time
 import csv
 import MySQLdb
 
-Years = [2013]
+Years = [2014]
 Weeks = [x for x in range(1,18)]
 print Weeks
 ### Need the function to bring in all information about each indivdual game and store it
