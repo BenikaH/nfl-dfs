@@ -127,7 +127,7 @@ x.execute(query)
 for row in playerList:
     print row
     with con:
-        query = "INSERT INTO rotowire_wkly_proj (week, player_id, pos, playernm_full, playernm_last, playernm_first, \
+        query = "INSERT INTO rotowire_wkly_proj (week, player_id, pos, playernm_full, playernm_first, playernm_last, \
             team, opp, spread, over_under, ml, dk_salary, dkp, dk_value, fd_salary, fdp, fd_value, weblink) \
                 VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                 "'"%s"'", "'"%s"'", "'"%s"'", %d, %1.2f, %1.2f, %d, %1.2f, %1.2f, "'"%s"'")" % \
