@@ -137,6 +137,8 @@ for row in playerList:
         x = con.cursor()
         x.execute(query)
 
+print "Player Table Complete"
+print "Starting Kicker Table..."
 
 ##### Kicker Table
 
