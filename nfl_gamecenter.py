@@ -12,8 +12,8 @@ import csv
 import MySQLdb
 
 Years = [2013]
-Weeks = [x for x in xrange(1,18)]
-
+Weeks = [x for x in range(1,18)]
+print Weeks
 ### Need the function to bring in all information about each indivdual game and store it
 def getgameids(week, year):
     r = requests.get("http://www.nfl.com/ajax/scorestrip?season="+str(year)+"&seasonType=REG&week="+str(week)).text
@@ -177,7 +177,7 @@ def saveplayerdict(playerIDdict):
         'pos': playerIDdict[key]['pos'], 'url': playerIDdict[key]['url']}
         dictlist.append(newdict)
         newdict = {}
-    with open('nfl-dfs/nflplayerids.csv', 'wb') as f:
+    with open('nflplayerids.csv', 'wb') as f:
         w = csv.DictWriter(f, fieldnames=headers)
         w.writeheader()
         w.writerows(dictlist)
@@ -187,7 +187,7 @@ def saveplayerdict(playerIDdict):
 def openplayerdict():
     masterlist = []
     playerIDdict = {}
-    with open('nfl-dfs/nflplayerids.csv') as f:
+    with open('nflplayerids.csv') as f:
         w = csv.DictReader(f)
         for row in w:
             masterlist.append(row)
@@ -207,8 +207,8 @@ def tableinsert(gamelist):
     # 'rush_lng': 0, 'name': u'Z.Miller', 'pass_td': 0, 'hmscore': '36', 'team': u'SEA', 'rec_yds': 42}
     
     ### Open connection
-    # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+    con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+    # con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
     
     # Remove data with same year -- no dupes
     query = "DELETE FROM nfl_gamecenter where year = %d" % (year)
@@ -333,7 +333,7 @@ gamelist = []
 
 
 for year in Years:
-    for week in Weeks:
+    for week in Weeks[:17]:
         dateinfo = [week, year]
         for gameid in getgameids(dateinfo[0], dateinfo[1]):
             print gameid
