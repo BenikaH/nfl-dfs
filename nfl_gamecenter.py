@@ -111,8 +111,7 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
         for key in passinfo.keys():
             gamedict[key] = {"name": passinfo[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
         for key in fumbles.keys():
-            if not gamedict[key]:
-                gamedict[key] = {"name": fumbles[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
+            gamedict[key] = {"name": fumbles[key]["name"], "team": teamabbr, "game_id": game_id['eid']}
 
 
         for key in gamedict.keys():         #### Get rushing data for each player
