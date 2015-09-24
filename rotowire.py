@@ -107,8 +107,8 @@ for player in fdplayerList:
     if player[1] == 'K':
         plname = player[2].split(', ')
         if len(plname) == 2:
-            player.insert(3, plname[0])
             player.insert(3, plname[1])
+            player.insert(3, plname[0])
         else:
             player.insert(3, '')
             player.insert(3, '')
