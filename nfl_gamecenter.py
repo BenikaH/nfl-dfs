@@ -11,8 +11,8 @@ import time
 import csv
 import MySQLdb
 
-Years = [2015]
-Weeks = [x for x in range(1,3)]
+Years = [2013,2014]
+Weeks = [x for x in range(1,18)]
 print Weeks
 ### Need the function to bring in all information about each indivdual game and store it
 def getgameids(week, year):
@@ -159,11 +159,10 @@ def getgamedata(game_id, dateinfo, playerIDdict, gamelist):
     for key in gamedict:
         if key not in playerIDdict.keys():
             playerdtl = getplayerid(key)
-            gamedict[key]["player_id"] = playerdtl[0]
+            # gamedict[key]["player_id"] = playerdtl[0]
             playerIDdict[key] = {'player_id': playerdtl[0], 'url': playerdtl[1], 'name': playerdtl[2], \
-                                'pos': playerdtl[3]} 
-        else:
-            gamedict[key]["player_id"] = playerIDdict[key]
+                                'pos': playerdtl[3]}
+        gamedict[key]["player_id"] = playerIDdict[key]
     gamelist.append(gamedict)
     return gamelist
 
@@ -177,7 +176,7 @@ def saveplayerdict(playerIDdict):
         'pos': playerIDdict[key]['pos'], 'url': playerIDdict[key]['url']}
         dictlist.append(newdict)
         newdict = {}
-    with open('nfl-dfs/nflplayerids.csv', 'wb') as f:
+    with open('nflplayerids.csv', 'wb') as f:
         w = csv.DictWriter(f, fieldnames=headers)
         w.writeheader()
         w.writerows(dictlist)
@@ -187,7 +186,7 @@ def saveplayerdict(playerIDdict):
 def openplayerdict():
     masterlist = []
     playerIDdict = {}
-    with open('nfl-dfs/nflplayerids.csv') as f:
+    with open('nflplayerids.csv') as f:
         w = csv.DictReader(f)
         for row in w:
             masterlist.append(row)
@@ -207,8 +206,8 @@ def tableinsert(gamelist):
     # 'rush_lng': 0, 'name': u'Z.Miller', 'pass_td': 0, 'hmscore': '36', 'team': u'SEA', 'rec_yds': 42}
     
     ### Open connection
-    # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+    con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+    # con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
     
     # Remove data with same year -- no dupes
     query = "DELETE FROM nfl_gamecenter WHERE year = %d AND week = %d" % (year, week)
@@ -251,7 +250,7 @@ def tableinsert(gamelist):
                     (player[key]['rush_yds'] * 0.1) + (player[key]['rush_tds'] * 6) + (player[key]['rec'] * 0.5) + \
                     (player[key]['rec_yds'] * 0.1) + (player[key]['rec_tds'] * 6) - \
                     (player[key]['fumbles_lost'] * 2)
-            
+                                    
             with con:
                 query = "INSERT INTO nfl_gamecenter (\
                 year, \
@@ -313,7 +312,6 @@ def tableinsert(gamelist):
                         
             x = con.cursor()
             x.execute(query)
-            print player
     
     print "gamelist inserted into table"
     return
@@ -334,12 +332,12 @@ gamelist = []
 
 
 for year in Years:
-    for week in Weeks[:2]:
+    for week in Weeks:
         dateinfo = [week, year]
         for gameid in getgameids(dateinfo[0], dateinfo[1]):
             print gameid
-            getgamedata(gameid, dateinfo, playerIDdict, gamelist)
-        
+            getgamedata(gameid, dateinfo, playerIDdict, gamelist)       #### Returns gamelist
+            # tableinsert(gamelist)
         print year, ": week ", week, " complete"
         time.sleep(1)
 
