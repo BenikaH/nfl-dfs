@@ -211,7 +211,7 @@ def tableinsert(gamelist):
     con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
     
     # Remove data with same year -- no dupes
-    query = "DELETE FROM nfl_gamecenter where year = %d" % (year)
+    query = "DELETE FROM nfl_gamecenter WHERE year = %d AND week = %d" % (year, week)
     x = con.cursor()
     x.execute(query)
 
@@ -313,6 +313,7 @@ def tableinsert(gamelist):
                         
             x = con.cursor()
             x.execute(query)
+            print player
     
     print "gamelist inserted into table"
     return
