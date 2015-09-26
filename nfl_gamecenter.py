@@ -11,8 +11,8 @@ import time
 import csv
 import MySQLdb
 
-Years = [2014]
-Weeks = [x for x in range(1,18)]
+Years = [2015]
+Weeks = [x for x in range(1,3)]
 print Weeks
 ### Need the function to bring in all information about each indivdual game and store it
 def getgameids(week, year):
@@ -333,7 +333,7 @@ gamelist = []
 
 
 for year in Years:
-    for week in Weeks[:17]:
+    for week in Weeks[:2]:
         dateinfo = [week, year]
         for gameid in getgameids(dateinfo[0], dateinfo[1]):
             print gameid
