@@ -11,9 +11,8 @@ import time
 import csv
 import MySQLdb
 
-Years = [2015]
-Weeks = [x for x in range(1,3)]
-print Weeks
+Years = [2013,2014,2015]
+
 ### Need the function to bring in all information about each indivdual game and store it
 def getgameids(week, year):
     r = requests.get("http://www.nfl.com/ajax/scorestrip?season="+str(year)+"&seasonType=REG&week="+str(week)).text
@@ -176,7 +175,7 @@ def saveplayerdict(playerIDdict):
         'pos': playerIDdict[key]['pos'], 'url': playerIDdict[key]['url']}
         dictlist.append(newdict)
         newdict = {}
-    with open('nfl-dfs/nflplayerids.csv', 'wb') as f:
+    with open('nflplayerids.csv', 'wb') as f:
         w = csv.DictWriter(f, fieldnames=headers)
         w.writeheader()
         w.writerows(dictlist)
@@ -186,7 +185,7 @@ def saveplayerdict(playerIDdict):
 def openplayerdict():
     masterlist = []
     playerIDdict = {}
-    with open('nfl-dfs/nflplayerids.csv') as f:
+    with open('nflplayerids.csv') as f:
         w = csv.DictReader(f)
         for row in w:
             masterlist.append(row)
@@ -206,8 +205,8 @@ def tableinsert(gamelist):
     # 'rush_lng': 0, 'name': u'Z.Miller', 'pass_td': 0, 'hmscore': '36', 'team': u'SEA', 'rec_yds': 42}
     
     ### Open connection
-    # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+    con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+    # con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
     
     # Remove data with same year -- no dupes
     query = "DELETE FROM nfl_gamecenter WHERE year = %d AND week = %d" % (year, week)
@@ -241,6 +240,12 @@ def tableinsert(gamelist):
             else:
                 recbonus = 0
             
+            if player[key]['week'] < 10:
+                addzero = '0'
+            else:
+                addzero = ''
+            yearwk = int(str(player[key]['year']) + addzero + str(player[key]['week']))
+            
             dkp = (player[key]['pass_yds'] * 0.04) + (player[key]['pass_tds'] * 4) - (player[key]['ints'] * 1) + \
                     (player[key]['rush_yds'] * 0.1) + (player[key]['rush_tds'] * 6) + (player[key]['rec'] * 1) + \
                     (player[key]['rec_yds'] * 0.1) + (player[key]['rec_tds'] * 6) + ((passbonus + rushbonus + recbonus) * 3) - \
@@ -255,6 +260,7 @@ def tableinsert(gamelist):
                 query = "INSERT INTO nfl_gamecenter (\
                 year, \
                 week, \
+                yearweek, \
                 start_time, \
                 day, \
                 game_id, \
@@ -293,7 +299,7 @@ def tableinsert(gamelist):
                 dkp, \
                 fdp, \
                 url) \
-                VALUES ("'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
+                VALUES ("'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
@@ -301,7 +307,7 @@ def tableinsert(gamelist):
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", \
                         "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" \
-                        % (player[key]['year'], player[key]['week'], player[key]['time'], player[key]['day'], player[key]['game_id'], \
+                        % (player[key]['year'], player[key]['week'], yearwk, player[key]['time'], player[key]['day'], player[key]['game_id'], \
                         key, player[key]['player_id']['player_id'], player[key]['player_id']['name'], player[key]['name'], player[key]['player_id']['pos'], \
                         player[key]['team'], home_away, opp, score, opp_score, \
                         player[key]['pass_cmp'], player[key]['pass_att'], player[key]['pass_yds'], player[key]['pass_tds'], player[key]['ints'], \
@@ -332,6 +338,11 @@ gamelist = []
 
 
 for year in Years:
+    if year == 2015:
+        maxwk = 3
+    else:
+        maxwk = 18
+    Weeks = [x for x in range(1,maxwk)]
     for week in Weeks:
         dateinfo = [week, year]
         for gameid in getgameids(dateinfo[0], dateinfo[1]):
