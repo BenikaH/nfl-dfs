@@ -340,7 +340,7 @@ Years = [2015]
 # f = open('weekinfo.txt', 'r')             ### Local
 f = open('nfl-dfs/weekinfo.txt', 'r')
 ftext = f.read().split(',')
-weekNum = int(ftext[0]-1)
+weekNum = int(ftext[0])-1
 
 for year in Years:
     # if year == 2015:
