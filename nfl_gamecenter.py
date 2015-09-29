@@ -11,7 +11,7 @@ import time
 import csv
 import MySQLdb
 
-Years = [2013,2014,2015]
+# Years = [2013,2014,2015]
 
 ### Need the function to bring in all information about each indivdual game and store it
 def getgameids(week, year):
@@ -336,13 +336,19 @@ gamelist = []
 #     print year, ": week ", week, " complete"
 #     time.sleep(2)
 
+Years = [2015]
+# f = open('weekinfo.txt', 'r')             ### Local
+f = open('nfl-dfs/weekinfo.txt', 'r')
+ftext = f.read().split(',')
+weekNum = int(ftext[0]-1)
 
 for year in Years:
-    if year == 2015:
-        maxwk = 3
-    else:
-        maxwk = 18
-    Weeks = [x for x in range(1,maxwk)]
+    # if year == 2015:
+    #     maxwk = 3
+    # else:
+    #     maxwk = 18
+    # Weeks = [x for x in range(1,maxwk)]
+    Weeks = [weekNum]
     for week in Weeks:
         dateinfo = [week, year]
         for gameid in getgameids(dateinfo[0], dateinfo[1]):
