@@ -10,6 +10,7 @@ import re
 import time
 import csv
 import MySQLdb
+import datetime
 
 # Years = [2013,2014,2015]
 
@@ -336,31 +337,35 @@ gamelist = []
 #     print year, ": week ", week, " complete"
 #     time.sleep(2)
 
-Years = [2015]
-# f = open('weekinfo.txt', 'r')             ### Local
-f = open('nfl-dfs/weekinfo.txt', 'r')
-ftext = f.read().split(',')
-weekNum = int(ftext[0])-1
+# Only run on Tuesday
+weekday = datetime.date.today().isoweekday()
 
-for year in Years:
-    # if year == 2015:
-    #     maxwk = 3
-    # else:
-    #     maxwk = 18
-    # Weeks = [x for x in range(1,maxwk)]
-    Weeks = [weekNum]
-    for week in Weeks:
-        dateinfo = [week, year]
-        for gameid in getgameids(dateinfo[0], dateinfo[1]):
-            print gameid
-            getgamedata(gameid, dateinfo, playerIDdict, gamelist)       #### Returns gamelist
-            # tableinsert(gamelist)
-        print year, ": week ", week, " complete"
-        time.sleep(1)
+if weekday == 2:
+    Years = [2015]
+    # f = open('weekinfo.txt', 'r')             ### Local
+    f = open('nfl-dfs/weekinfo.txt', 'r')
+    ftext = f.read().split(',')
+    weekNum = int(ftext[0])-1
 
-saveplayerdict(playerIDdict)
+    for year in Years:
+        # if year == 2015:
+        #     maxwk = 3
+        # else:
+        #     maxwk = 18
+        # Weeks = [x for x in range(1,maxwk)]
+        Weeks = [weekNum]
+        for week in Weeks:
+            dateinfo = [week, year]
+            for gameid in getgameids(dateinfo[0], dateinfo[1]):
+                print gameid
+                getgamedata(gameid, dateinfo, playerIDdict, gamelist)       #### Returns gamelist
+                # tableinsert(gamelist)
+            print year, ": week ", week, " complete"
+            time.sleep(1)
+
+    saveplayerdict(playerIDdict)
 
 
-tableinsert(gamelist)
+    tableinsert(gamelist)
 
 
