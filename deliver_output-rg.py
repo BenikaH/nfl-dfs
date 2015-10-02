@@ -68,7 +68,8 @@ with con:
     cons.lowtier_dk,\
     cons.toptier_fd,\
     cons.midtier_fd,\
-    cons.lowtier_fd\
+    cons.lowtier_fd,\
+    rg.playernm_full\
     FROM\
     numberfire_wkly_proj nf\
     LEFT JOIN player_map map on nf.player_id = map.numberfire_id\
@@ -94,14 +95,14 @@ with con:
     x.execute(query)
 
 rows = x.fetchall()
-fp = open('week' + str(weekNum) +'output.csv', 'w')
+fp = open('week' + str(weekNum) +'output-rg.csv', 'w')
 myFile = csv.writer(fp)
 myFile.writerows(rows)
 fp.close()
 
 if send == "Send":
     msg = MIMEMultipart()
-    f = file('week'+str(weekNum)+'output.csv')
+    f = file('week'+str(weekNum)+'output-rg.csv')
     attachment = MIMEText(f.read())
     attachment.add_header('Content-Disposition', 'attachment', filename='week' + str(weekNum) +'output.csv')
     msg.attach(attachment)
