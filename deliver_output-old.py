@@ -32,7 +32,6 @@ with con:
     query = 'SELECT nf.week,\
     p.gamedate,\
     concat(nf.playernm_first, " ", nf.playernm_last) as playernm_full,\
-    rg.playernm_full,\
     nf.pos,\
     nf.team,\
     nf.opp,\
@@ -51,6 +50,8 @@ with con:
     rg.fdp as rg_fdp,\
     fp.dkp as fp_dkp,\
     fp.fdp as fp_fdp,\
+    fs.dkp as fs_dkp,\
+    fs.fdp as fs_fdp,\
     e.dkp as e_dkp,\
     e.fdp as e_fdp,\
     c.dkp as c_dkp,\
@@ -74,6 +75,7 @@ with con:
     LEFT JOIN (select distinct player_id, week, dkp, fdp from rotowire_wkly_proj) rw on rw.player_id = map.rotowire_id and rw.week = %d\
     LEFT JOIN rotogrinders_wkly_proj rg on rg.player_id = map.rotogrinders_id and rg.week = %d\
     LEFT JOIN fantasypros_wkly_proj fp on fp.player_id = map.fantasypros_id and fp.week = %d\
+    LEFT JOIN foxsports_wkly_proj fs on fs.player_id = map.foxsports_id and fs.week = %d\
     LEFT JOIN espn_wkly_proj e on e.player_id = map.espn_id and e.week = %d\
     LEFT JOIN cbssports_wkly_proj c on c.player_id = map.cbssports_id and c.week = %d\
     LEFT JOIN team_map tm on nf.team = tm.nf_team\
@@ -87,19 +89,19 @@ with con:
     LEFT JOIN (select distinct player_id, toptier_dk, midtier_dk, lowtier_dk, toptier_fd, midtier_fd, lowtier_fd from consistency_tiers) cons on cons.player_id = guru.player_id\
     \
     WHERE nf.week = %d\
-    ORDER BY nf.dk_salary DESC;' % (weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum)
+    ORDER BY nf.dk_salary DESC;' % (weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum)
     x = con.cursor()
     x.execute(query)
 
 rows = x.fetchall()
-fp = open('week' + str(weekNum) +'output-rg.csv', 'w')
+fp = open('week' + str(weekNum) +'output.csv', 'w')
 myFile = csv.writer(fp)
 myFile.writerows(rows)
 fp.close()
 
 if send == "Send":
     msg = MIMEMultipart()
-    f = file('week'+str(weekNum)+'output-rg.csv')
+    f = file('week'+str(weekNum)+'output.csv')
     attachment = MIMEText(f.read())
     attachment.add_header('Content-Disposition', 'attachment', filename='week' + str(weekNum) +'output.csv')
     msg.attach(attachment)
