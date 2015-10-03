@@ -82,9 +82,9 @@ r = requests.get("http://www.foxsports.com/fantasy/football/commissioner/Researc
 soup = BeautifulSoup(r)
 
 page = soup.find("a", {"id" : "MainColumn_LastPageLink"})
-
+print page
 lastpage = int(page.text)
-
+print lastpage
 playerList = []
 for i in range(1,lastpage):
     getFoxProj(i,weekNum)
