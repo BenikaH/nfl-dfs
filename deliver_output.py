@@ -92,14 +92,14 @@ with con:
     x.execute(query)
 
 rows = x.fetchall()
-fp = open('week' + str(weekNum) +'output-rg.csv', 'w')
+fp = open('week' + str(weekNum) +'output.csv', 'w')
 myFile = csv.writer(fp)
 myFile.writerows(rows)
 fp.close()
 
 if send == "Send":
     msg = MIMEMultipart()
-    f = file('week'+str(weekNum)+'output-rg.csv')
+    f = file('week'+str(weekNum)+'output.csv')
     attachment = MIMEText(f.read())
     attachment.add_header('Content-Disposition', 'attachment', filename='week' + str(weekNum) +'output.csv')
     msg.attach(attachment)
