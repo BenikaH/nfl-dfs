@@ -32,10 +32,10 @@ with con:
     query = 'SELECT nf.week,\
     p.gamedate,\
     concat(nf.playernm_first, " ", nf.playernm_last) as playernm_full,\
-    rg.playernm_full,\
     nf.pos,\
     nf.team,\
     nf.opp,\
+    rg.playernm_full,\
     nf.dk_salary,\
     dks.week_chg,\
     nf.fd_salary,\
@@ -125,3 +125,13 @@ if send == "Send":
     server.sendmail(msg['From'], msg['To'] , msg.as_string())
     server.close()
 
+
+
+
+# counter = 1
+# >>> for w in sorted(playerlist, key=lambda x:x['score']):
+# ...   w['scorerank'] = counter/(1.0 * len(playerlist))
+# ...   counter += 1
+# ...
+# >>> playerlist
+# [{'ptsrank': 0.6666666666666666, 'score': 90, 'pts': 25.4, 'name': 'Rodgers', 'scorerank': 0.3333333333333333}, {'ptsrank': 1.0, 'score': 92.4, 'pts': 30.9, 'name': 'Brady', 'scorerank': 1.0}, {'ptsrank': 0.3333333333333333, 'score': 91, 'pts': 24.9, 'name': 'Tebow', 'scorerank': 0.6666666666666666}]
