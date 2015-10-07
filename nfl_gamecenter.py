@@ -339,7 +339,7 @@ gamelist = []
 
 # Only run on Tuesday
 weekday = datetime.date.today().isoweekday()
-
+weekday = 2
 if weekday == 2:
     Years = [2015]
     # f = open('weekinfo.txt', 'r')             ### Local
