@@ -59,7 +59,9 @@ with con:
     p.total,\
     p.teamtotal,\
     p.spread_chg,\
+    p.total_chg,\
     p.teamtotal_chg,\
+    p.consensus,\
     vdk.avg_dkp,\
     vfd.avg_fdp,\
     cons.toptier_dk,\

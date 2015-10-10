@@ -1,4 +1,4 @@
-SET @weeknum = 4;
+SET @weeknum = 5;
 
 SELECT
 nf.week,
@@ -33,7 +33,9 @@ p.spread,
 p.total,
 p.teamtotal,
 p.spread_chg,
+p.total_chg,
 p.teamtotal_chg,
+p.consensus,
 vdk.avg_dkp,
 vfd.avg_fdp,
 cons.toptier_dk,
