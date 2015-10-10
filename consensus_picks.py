@@ -3,7 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 import MySQLdb
-
+import csv
 
 r = requests.get("http://www.oddsshark.com/nfl/consensus-picks").text
 
@@ -61,3 +61,13 @@ for game in gameset:
         betlist.append(gamedict)
         
 print betlist
+
+teamlist = []
+# Bring in team list
+# with open('nfl-dfs/team_list.csv') as f:
+with open('team_list.csv', 'rU') as f:
+    w = csv.DictReader(f)
+    for row in w:
+        teamlist.append(row)
+    
+print teamlist
