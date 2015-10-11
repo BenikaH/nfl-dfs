@@ -134,7 +134,7 @@ def main():
 
         addtoDb(con, weekNum, playerDict)
     
-        print "Week ", week, "database add complete"
+        print "Week ", weekNum, "database add complete"
 
 if __name__ == '__main__':
     main()
