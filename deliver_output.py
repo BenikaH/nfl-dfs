@@ -55,6 +55,8 @@ with con:
     e.fdp as e_fdp,\
     c.dkp as c_dkp,\
     c.fdp as c_fdp,\
+    fg.av_dkp as fg_dkp,\
+    fg.av_fdp as fg_fdp,\
     p.spread,\
     p.total,\
     p.teamtotal,\
@@ -78,6 +80,7 @@ with con:
     LEFT JOIN fantasypros_wkly_proj fp on fp.player_id = map.fantasypros_id and fp.week = %d\
     LEFT JOIN espn_wkly_proj e on e.player_id = map.espn_id and e.week = %d\
     LEFT JOIN cbssports_wkly_proj c on c.player_id = map.cbssports_id and c.week = %d\
+    LEFT JOIN footballguys_wkly_proj fg on fg.playernm_full = map.footballguys_id and fg.week = %d\
     LEFT JOIN team_map tm on nf.team = tm.nf_team\
     LEFT JOIN rotogrinders_odds rgo on rgo.team = tm.rg_team and rgo.week = %d\
     LEFT JOIN pinnacle_odds p on p.team = tm.pinnacle_team and p.week = %d\

@@ -109,6 +109,11 @@ def main():
         fldr = 'nfl-dfs/'
     else:
         fldr = ''
+
+    if local == True:
+        con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
+    else:
+        con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
         
     ##### Get week number
     f = open(fldr + 'weekinfo.txt', 'r')
@@ -116,23 +121,20 @@ def main():
     weekNum = int(ftext[0])
     
     sites = ['FanDuel', 'DraftKings']
-
-    playerDict = {}
-
-    for site in sites:
-        playerDict = getsiteproj(weekNum, site, playerDict)
-        time.sleep(3)
     
-    playerDict = cleandict(playerDict)
+    weeks = [2,3,4,5]
+    for weekNum in weeks:
+        playerDict = {}
 
-    if local == True:
-        con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-    else:
-        con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-
-    addtoDb(con, weekNum, playerDict)
+        for site in sites:
+            playerDict = getsiteproj(weekNum, site, playerDict)
+            time.sleep(3)
     
-    print "database add complete"
+        playerDict = cleandict(playerDict)
+
+        addtoDb(con, weekNum, playerDict)
+    
+        print "Week ", week, "database add complete"
 
 if __name__ == '__main__':
     main()

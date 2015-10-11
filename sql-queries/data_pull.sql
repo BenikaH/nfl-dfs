@@ -29,6 +29,8 @@ e.dkp as e_dkp,
 e.fdp as e_fdp,
 c.dkp as c_dkp,
 c.fdp as c_fdp,
+fg.av_dkp as fg_dkp,
+fg.av_fdp as fg_fdp,
 p.spread,
 p.total,
 p.teamtotal,
@@ -54,6 +56,7 @@ LEFT JOIN fantasypros_wkly_proj fp on fp.player_id = map.fantasypros_id and fp.w
 LEFT JOIN foxsports_wkly_proj fs on fs.player_id = map.foxsports_id and fs.week = @weeknum
 LEFT JOIN espn_wkly_proj e on e.player_id = map.espn_id and e.week = @weeknum
 LEFT JOIN cbssports_wkly_proj c on c.player_id = map.cbssports_id and c.week = @weeknum
+LEFT JOIN footballguys_wkly_proj fg on fg.playernm_full = map.footballguys_id and fg.week = @weeknum
 LEFT JOIN team_map tm on nf.team = tm.nf_team
 -- LEFT JOIN rotogrinders_odds rgo on rgo.team = tm.rg_team and rgo.week = 2
 LEFT JOIN pinnacle_odds p on p.team = tm.pinnacle_team and p.week = @weeknum
