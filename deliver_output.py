@@ -92,7 +92,7 @@ with con:
     LEFT JOIN (select distinct player_id, toptier_dk, midtier_dk, lowtier_dk, toptier_fd, midtier_fd, lowtier_fd from consistency_tiers) cons on cons.player_id = guru.player_id\
     \
     WHERE nf.week = %d\
-    ORDER BY nf.dk_salary DESC;' % (weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum)
+    ORDER BY nf.dk_salary DESC;' % (weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum, weekNum)
     x = con.cursor()
     x.execute(query)
 
