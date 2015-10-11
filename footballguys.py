@@ -121,20 +121,18 @@ def main():
     weekNum = int(ftext[0])
     
     sites = ['FanDuel', 'DraftKings']
-    
-    weeks = [2,3,4,5]
-    for weekNum in weeks:
-        playerDict = {}
 
-        for site in sites:
-            playerDict = getsiteproj(weekNum, site, playerDict)
-            time.sleep(3)
-    
-        playerDict = cleandict(playerDict)
+    playerDict = {}
 
-        addtoDb(con, weekNum, playerDict)
-    
-        print "Week ", weekNum, "database add complete"
+    for site in sites:
+        playerDict = getsiteproj(weekNum, site, playerDict)
+        time.sleep(3)
+
+    playerDict = cleandict(playerDict)
+
+    addtoDb(con, weekNum, playerDict)
+
+    print "Week ", weekNum, "database add complete"
 
 if __name__ == '__main__':
     main()
