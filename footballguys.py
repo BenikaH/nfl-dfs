@@ -72,7 +72,7 @@ def addtoDb(con, weekNum, playerDict):
 
     for key in playerDict.keys():
         with con:
-            query = "INSERT INTO footballguys_wkly_proj (name, week, pos, game, fd_salary, dk_salary, mt_fdp, dd_fdp, \
+            query = "INSERT INTO footballguys_wkly_proj (playernm_full, week, pos, game, fd_salary, dk_salary, mt_fdp, dd_fdp, \
                     sb_fdp, av_fdp, mtval_fdp, ddval_fdp, sbval_fdp, avval_fdp, mthval_fdp, ddhval_fdp, \
                     sbhval_fdp, avhval_fdp, mt_dkp, dd_dkp, sb_dkp, av_dkp, mtval_dkp, ddval_dkp, \
                     sbval_dkp, avval_dkp, mthval_dkp, ddhval_dkp, sbhval_dkp, avhval_dkp) \
