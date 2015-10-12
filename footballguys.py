@@ -121,36 +121,41 @@ def cleandict(playerDict):
 
 def main():
     
-    local = True
+    local = False
     if local == False:
         fldr = 'nfl-dfs/'
+        con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+
+        # Only run on Tue, Thu, Sat, Sun
+        weekday = datetime.date.today().isoweekday()
+        if weekday in [2,4,6,7]:
+            runtoday = True
+            
     else:
         fldr = ''
-
-    if local == True:
         con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-    else:
-        con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-        
-    ##### Get week number
-    # f = open(fldr + 'weekinfo.txt', 'r')
-    # ftext = f.read().split(',')
-    # weekNum = int(ftext[0])
-    weekNum = getweek()
+        runtoday = True
+
+    if runtoday:
+        ##### Get week number
+        # f = open(fldr + 'weekinfo.txt', 'r')
+        # ftext = f.read().split(',')
+        # weekNum = int(ftext[0])
+        weekNum = getweek()
     
-    sites = ['FanDuel', 'DraftKings']
+        sites = ['FanDuel', 'DraftKings']
 
-    playerDict = {}
+        playerDict = {}
 
-    for site in sites:
-        playerDict = getsiteproj(weekNum, site, playerDict)
-        time.sleep(3)
+        for site in sites:
+            playerDict = getsiteproj(weekNum, site, playerDict)
+            time.sleep(3)
 
-    playerDict = cleandict(playerDict)
+        playerDict = cleandict(playerDict)
 
-    addtoDb(con, weekNum, playerDict)
+        addtoDb(con, weekNum, playerDict)
 
-    print "Week ", weekNum, "database add complete"
+        print "Week ", weekNum, "database add complete"
 
 if __name__ == '__main__':
     main()
