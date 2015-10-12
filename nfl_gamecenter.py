@@ -222,8 +222,11 @@ def tableinsert(gamelist):
     # 'rush_lng': 0, 'name': u'Z.Miller', 'pass_td': 0, 'hmscore': '36', 'team': u'SEA', 'rec_yds': 42}
     
     ### Open connection
-    # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+    local = False
+    if local == False:
+        con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+    else:
+        con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
     
     # Remove data with same year -- no dupes
     query = "DELETE FROM nfl_gamecenter WHERE year = %d AND week = %d" % (year, week)

@@ -20,19 +20,17 @@ def getweek():
             
     return weekNum
 
-
-# weekNum = int(raw_input("Week number? "))
-
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-# ftext = f.read().split(',')
-# weekNum = int(ftext[0])
 weekNum = getweek()
 
 # firstPull = raw_input("Are these opening odds (y/n)? ")
 
 headerList = ['Week', 'Date', 'Time', 'HomeAway', 'Team', 'Opp', 'Team Spread', 'Opp Spread', 'Total Points', 'Team Proj Score', 'Opp Proj Score', 'Opening Team Score', 'Opening Opp Score', 'Team Score Chg', 'Opp Score Chg']
 
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+local = False
+if local == False:
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
 with con:
 

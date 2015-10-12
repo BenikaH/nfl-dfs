@@ -25,10 +25,6 @@ def getweek():
 
 headerList = ['week', 'playerID', 'playernm_full', 'playernm_first', 'playernm_last', 'Pos', 'GameInfo', 'dk_salary', 'dkp', 'dk_value', 'playerLink', 'fd_salary', 'fdp', 'fd_value']
 
-# f = open('weekinfo.txt', 'r')             ### Local
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-# ftext = f.read().split(',')
-# weekNum = int(ftext[0])
 weekNum = getweek()
 
 # weekNum = int(raw_input("Week number? "))
@@ -161,9 +157,11 @@ print playerList
 # print dictList
 
 ####### Add to database
-
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+local = False
+if local == False:
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
 query = "DELETE FROM rotogrinders_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

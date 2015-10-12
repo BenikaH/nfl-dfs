@@ -137,8 +137,11 @@ for row in masterList:
 listlen = len(masterList)
 print masterList
 #
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+local = False
+if local == False:
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
 query = "DELETE FROM dfs_results_2015 WHERE week = %d" % (weekNum)
 x = con.cursor()

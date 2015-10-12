@@ -19,9 +19,13 @@ def getweek():
             
     return weekNum
 
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-
+local = False
+if local == False:
+    fldr = 'nfl-dfs/'
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    fldr = ''
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
 f = open('nfl-dfs/weekinfo.txt', 'r')
 # f = open('weekinfo.txt', 'r')             ### Local

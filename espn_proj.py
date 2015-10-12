@@ -95,19 +95,20 @@ def fantasyscore(player):
     fpts = [dkscore, fdscore]
     return fpts
 
-# f = open('weekinfo.txt', 'r')             ### Local
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-# ftext = f.read().split(',')
-# weekNum = int(ftext[0])
+
+local = False
+if local == False:
+    fldr = 'nfl-dfs/'
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    fldr = ''
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+    
 weekNum = getweek()
     
 playerList = espnscrape(weekNum)
 
 ####### Add to database
-
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-
 
 query = "DELETE FROM espn_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

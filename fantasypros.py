@@ -22,17 +22,6 @@ def getweek():
             
     return weekNum
 
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-# # f = open('weekinfo.txt', 'r')             ### Local
-# ftext = f.read().split(',')
-# weekNum = int(ftext[0])
-weekNum = getweek()
-
-# weekNum = int(raw_input("Week number? "))
-
-posSet = ["QB", "RB", "WR", "TE"]
-
-playerList = []
 def getPlayerProj(weekNum, position, playerList):
     link = "http://www.fantasypros.com/nfl/projections/" + position.lower() + ".php?week="+str(weekNum)
     time.sleep(2)
@@ -109,6 +98,11 @@ def fantasyscore(player):
     return fpts
 
 
+weekNum = getweek()
+
+posSet = ["QB", "RB", "WR", "TE"]
+
+playerList = []
 
 for pos in posSet:
     getPlayerProj(weekNum, pos, playerList)
@@ -117,9 +111,13 @@ for pos in posSet:
 print playerList
 
 ####### Add to database
-
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+local = False
+if local == False:
+    fldr = 'nfl-dfs/'
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    fldr = ''
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
 query = "DELETE FROM fantasypros_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

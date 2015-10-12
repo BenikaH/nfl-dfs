@@ -131,9 +131,11 @@ for player in fdplayerList:
         kicker.append(player)
 print kicker
 
-
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+local = False
+if local == False:
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
 query = "DELETE FROM rotowire_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

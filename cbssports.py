@@ -118,6 +118,15 @@ def wrscore(player):
     fpts.append(fdscore)
     return fpts
 
+
+local = False
+if local == False:
+    fldr = 'nfl-dfs/'
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    fldr = ''
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+    
 # f = open('weekinfo.txt', 'r')             ### Local
 # f = open('nfl-dfs/weekinfo.txt', 'r')
 # ftext = f.read().split(',')
@@ -125,12 +134,6 @@ def wrscore(player):
 weekNum = getweek()
     
 playerList = cbsdata(weekNum)
-
-####### Add to database
-
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-
 
 query = "DELETE FROM cbssports_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()

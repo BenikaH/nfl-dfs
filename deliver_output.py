@@ -26,11 +26,15 @@ def getweek():
             
     return weekNum
 
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+local = False
+if local == False:
+    fldr = 'nfl-dfs/'
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    fldr = ''
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
-f = open('nfl-dfs/weekinfo.txt', 'r')
-# f = open('weekinfo.txt', 'r')             ### Local
+f = open(fldr + 'weekinfo.txt', 'r')
 ftext = f.read().split(',')
 # weekNum = int(ftext[0])
 send = ftext[1]
@@ -40,8 +44,7 @@ f.close()
 weekNum = getweek()
 
 if send == "Send":
-    f = open('nfl-dfs/inputfile.txt', 'r')
-    # f = open('inputfile.txt', 'r')             ### Local
+    f = open(fldr + 'inputfile.txt', 'r')
     ftext = f.read().split(',')
     email = ftext[0]
     pwd = ftext[1]

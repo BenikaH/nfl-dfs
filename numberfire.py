@@ -20,10 +20,6 @@ def getweek():
             
     return weekNum
 
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-# f = open('weekinfo.txt', 'r')             ### Local
-# ftext = f.read().split(',')
-# weekNum = int(ftext[0])
 weekNum = getweek()
 
 r = requests.get("http://www.numberfire.com/nfl/fantasy/fantasy-football-projections").text
@@ -83,9 +79,11 @@ headerList = ['week','player_id','player','opp','opp_rank','ovr_rank','pos_rank'
  u'8300', u'2.72', u'Aaron', u'Rodgers ', u'QB', u' GB']
 """
 
-
-# con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
-con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+local = False
+if local == False:
+    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+else:
+    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
 query = "DELETE FROM numberfire_wkly_proj WHERE week = %d" % (weekNum)
 x = con.cursor()
