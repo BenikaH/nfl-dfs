@@ -122,6 +122,7 @@ def cleandict(playerDict):
 def main():
     
     local = False
+    runtoday = False
     if local == False:
         fldr = 'nfl-dfs/'
         con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
