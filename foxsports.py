@@ -4,6 +4,22 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import MySQLdb
+import datetime
+
+def getweek():
+    
+    today = datetime.date.today()
+    week1 = datetime.date(2015, 9, 8)       #### Tuesday of Week 1
+    datedict = {}
+    
+    for i in range(1,18):
+        datedict[i] = week1 + datetime.timedelta(days=7*(i-1))      #### Week Starting Tuesday
+    
+    for key in datedict.keys():
+        if today >= datedict[key] and today < datedict[key + 1]:
+            weekNum = key
+            
+    return weekNum
 
 
 def getFoxProj(page, weekNum):
@@ -72,9 +88,10 @@ def fantasyscore(player):
     return fpts
     
 # f = open('weekinfo.txt', 'r')             ### Local
-f = open('nfl-dfs/weekinfo.txt', 'r')
-ftext = f.read().split(',')
-weekNum = int(ftext[0])
+# f = open('nfl-dfs/weekinfo.txt', 'r')
+# ftext = f.read().split(',')
+# weekNum = int(ftext[0])
+weekNum = getweek()
 
 # weekNum = int(raw_input("Week number? "))
    

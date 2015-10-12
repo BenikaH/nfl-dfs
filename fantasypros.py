@@ -5,11 +5,28 @@ import requests
 import re
 import time
 import MySQLdb
+import datetime
 
-f = open('nfl-dfs/weekinfo.txt', 'r')
-# f = open('weekinfo.txt', 'r')             ### Local
-ftext = f.read().split(',')
-weekNum = int(ftext[0])
+def getweek():
+    
+    today = datetime.date.today()
+    week1 = datetime.date(2015, 9, 8)       #### Tuesday of Week 1
+    datedict = {}
+    
+    for i in range(1,18):
+        datedict[i] = week1 + datetime.timedelta(days=7*(i-1))      #### Week Starting Tuesday
+    
+    for key in datedict.keys():
+        if today >= datedict[key] and today < datedict[key + 1]:
+            weekNum = key
+            
+    return weekNum
+
+# f = open('nfl-dfs/weekinfo.txt', 'r')
+# # f = open('weekinfo.txt', 'r')             ### Local
+# ftext = f.read().split(',')
+# weekNum = int(ftext[0])
+weekNum = getweek()
 
 # weekNum = int(raw_input("Week number? "))
 

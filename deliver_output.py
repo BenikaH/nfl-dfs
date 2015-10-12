@@ -9,16 +9,35 @@ import smtplib
 from email.mime.text import MIMEText
 from email.MIMEMultipart import MIMEMultipart
 
+import datetime
+
+def getweek():
+    
+    today = datetime.date.today()
+    week1 = datetime.date(2015, 9, 8)       #### Tuesday of Week 1
+    datedict = {}
+    
+    for i in range(1,18):
+        datedict[i] = week1 + datetime.timedelta(days=7*(i-1))      #### Week Starting Tuesday
+    
+    for key in datedict.keys():
+        if today >= datedict[key] and today < datedict[key + 1]:
+            weekNum = key
+            
+    return weekNum
+
 # con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection
 con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
 
 f = open('nfl-dfs/weekinfo.txt', 'r')
 # f = open('weekinfo.txt', 'r')             ### Local
 ftext = f.read().split(',')
-weekNum = int(ftext[0])
+# weekNum = int(ftext[0])
 send = ftext[1]
 print send
 f.close()
+
+weekNum = getweek()
 
 if send == "Send":
     f = open('nfl-dfs/inputfile.txt', 'r')

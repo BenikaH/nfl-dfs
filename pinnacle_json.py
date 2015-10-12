@@ -4,6 +4,23 @@ import requests
 import MySQLdb
 import csv
 from bs4 import BeautifulSoup
+import datetime
+
+
+def getweek():
+    
+    today = datetime.date.today()
+    week1 = datetime.date(2015, 9, 8)       #### Tuesday of Week 1
+    datedict = {}
+    
+    for i in range(1,18):
+        datedict[i] = week1 + datetime.timedelta(days=7*(i-1))      #### Week Starting Tuesday
+    
+    for key in datedict.keys():
+        if today >= datedict[key] and today < datedict[key + 1]:
+            weekNum = key
+            
+    return weekNum
 
 def consensus(fldr):
 
@@ -243,10 +260,11 @@ def main():
                 'opp_odds', 'opp_total', 'overprice', 'underprice', 'total', 'gamedate', 'gametime']
 
     ##### Get week number
-    f = open(fldr + 'weekinfo.txt', 'r')
-    # f = open('weekinfo.txt', 'r')             ### Local
-    ftext = f.read().split(',')
-    weekNum = int(ftext[0])
+    # f = open(fldr + 'weekinfo.txt', 'r')
+    # # f = open('weekinfo.txt', 'r')             ### Local
+    # ftext = f.read().split(',')
+    # weekNum = int(ftext[0])
+    weekNum = getweek()
     
     if local == True:
         con = MySQLdb.connect('localhost', 'root', '', 'test')            #### Localhost connection

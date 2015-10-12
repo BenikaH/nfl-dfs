@@ -3,13 +3,30 @@
 from bs4 import BeautifulSoup
 import requests
 import MySQLdb
+import datetime
+
+def getweek():
+    
+    today = datetime.date.today()
+    week1 = datetime.date(2015, 9, 8)       #### Tuesday of Week 1
+    datedict = {}
+    
+    for i in range(1,18):
+        datedict[i] = week1 + datetime.timedelta(days=7*(i-1))      #### Week Starting Tuesday
+    
+    for key in datedict.keys():
+        if today >= datedict[key] and today < datedict[key + 1]:
+            weekNum = key
+            
+    return weekNum
 
 
 # weekNum = int(raw_input("Week number? "))
 
-f = open('nfl-dfs/weekinfo.txt', 'r')
-ftext = f.read().split(',')
-weekNum = int(ftext[0])
+# f = open('nfl-dfs/weekinfo.txt', 'r')
+# ftext = f.read().split(',')
+# weekNum = int(ftext[0])
+weekNum = getweek()
 
 # firstPull = raw_input("Are these opening odds (y/n)? ")
 

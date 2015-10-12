@@ -6,8 +6,25 @@ import re
 import time
 import MySQLdb
 import time
+import datetime
 
 # headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36'}
+
+def getweek():
+    
+    today = datetime.date.today()
+    week1 = datetime.date(2015, 9, 8)       #### Tuesday of Week 1
+    datedict = {}
+    
+    for i in range(1,18):
+        datedict[i] = week1 + datetime.timedelta(days=7*(i-1))      #### Week Starting Tuesday
+    
+    for key in datedict.keys():
+        if today >= datedict[key] and today < datedict[key + 1]:
+            weekNum = key
+            
+    return weekNum
+
 
 def getsiteproj(weekNum, site, playerDict):    
     
@@ -104,7 +121,7 @@ def cleandict(playerDict):
 
 def main():
     
-    local = False
+    local = True
     if local == False:
         fldr = 'nfl-dfs/'
     else:
@@ -116,9 +133,10 @@ def main():
         con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
         
     ##### Get week number
-    f = open(fldr + 'weekinfo.txt', 'r')
-    ftext = f.read().split(',')
-    weekNum = int(ftext[0])
+    # f = open(fldr + 'weekinfo.txt', 'r')
+    # ftext = f.read().split(',')
+    # weekNum = int(ftext[0])
+    weekNum = getweek()
     
     sites = ['FanDuel', 'DraftKings']
 
