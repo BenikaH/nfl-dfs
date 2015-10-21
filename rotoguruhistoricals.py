@@ -108,7 +108,7 @@ def getweeklyresults(weekNm):
 
 def main():
     
-    runtoday = True
+    runtoday = False
     # Only run on Tuesday
     weekday = datetime.date.today().isoweekday()
     if weekday == 2:
