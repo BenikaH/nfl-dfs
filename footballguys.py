@@ -3,7 +3,6 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-import time
 import MySQLdb
 import time
 import datetime

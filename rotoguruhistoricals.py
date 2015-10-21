@@ -105,53 +105,69 @@ def getweeklyresults(weekNm):
                 continue
     return playerList
 
-# f = open('weekinfo.txt', 'r')             ### Local
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-# ftext = f.read().split(',')
-# weekNum = int(ftext[0])-1
-weekNum = getweek() - 1
 
-masterList = []
+def main():
+    
+    runtoday = False
+    # Only run on Tuesday
+    weekday = datetime.date.today().isoweekday()
+    if weekday == 2:
+        runtoday = True
+    else:
+        print "Not Tuesday"
+    
+    if runtoday:    
+        # f = open('weekinfo.txt', 'r')             ### Local
+        # f = open('nfl-dfs/weekinfo.txt', 'r')
+        # ftext = f.read().split(',')
+        # weekNum = int(ftext[0])-1
+        weekNum = getweek() - 1
 
-weeklyresult = getweeklyresults(weekNum)
-# for i in range(1,18):
-#     weeklyresult = getweeklyresults(i)
+        masterList = []
 
-for row in weeklyresult:
-    masterList.append(row)
-# print "Week %d Complete" % (i)
+        weeklyresult = getweeklyresults(weekNum)
+        # for i in range(1,18):
+        #     weeklyresult = getweeklyresults(i)
 
-for row in masterList:
-    row[1] = int(row[1])
-    row[5] = round(float(row[5]),2)
-    row[9] = round(float(row[9]),2)
-    try:
-        row[6] = int(row[6].replace('$','').replace(',',''))
-    except:
-        row[6] = 0
-    try:
-        row[10] = int(row[10].replace('$','').replace(',',''))
-    except:
-        row[10] = 0
+        for row in weeklyresult:
+            masterList.append(row)
+        # print "Week %d Complete" % (i)
 
-listlen = len(masterList)
-print masterList
-#
-local = False
-if local == False:
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-else:
-    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+        for row in masterList:
+            row[1] = int(row[1])
+            row[5] = round(float(row[5]),2)
+            row[9] = round(float(row[9]),2)
+            try:
+                row[6] = int(row[6].replace('$','').replace(',',''))
+            except:
+                row[6] = 0
+            try:
+                row[10] = int(row[10].replace('$','').replace(',',''))
+            except:
+                row[10] = 0
 
-query = "DELETE FROM dfs_results_2015 WHERE week = %d" % (weekNum)
-x = con.cursor()
-x.execute(query)
+        listlen = len(masterList)
+        print masterList
+        #
+        local = False
+        if local == False:
+            con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+        else:
+            con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
-for row in masterList:
-    with con:
-        query = "INSERT INTO dfs_results_2015 (week, player_id, playernm_full, team, opp, dkp, dk_salary, playernm_last, playernm_first, fdp, fd_salary, pos) \
-        VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %d, "'"%s"'", "'"%s"'", %1.2f, %d, "'"%s"'")" % (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+        query = "DELETE FROM dfs_results_2015 WHERE week = %d" % (weekNum)
         x = con.cursor()
         x.execute(query)
-    if masterList.index(row) % 100 == 0:
-        print str(masterList.index(row)) + " out of " + str(listlen)
+
+        for row in masterList:
+            with con:
+                query = "INSERT INTO dfs_results_2015 (week, player_id, playernm_full, team, opp, dkp, dk_salary, playernm_last, playernm_first, fdp, fd_salary, pos) \
+                VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %d, "'"%s"'", "'"%s"'", %1.2f, %d, "'"%s"'")" % (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
+                x = con.cursor()
+                x.execute(query)
+            if masterList.index(row) % 100 == 0:
+                print str(masterList.index(row)) + " out of " + str(listlen)
+
+
+if __name__ == '__main__':
+    main()
