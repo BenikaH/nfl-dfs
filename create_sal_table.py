@@ -197,7 +197,6 @@ def createranktable(weekNum, local, totalweeks):
         sum(te_per_wk) - sum(teavgpts) as tevar\
         FROM\
         	(SELECT\
-        		-- break out into columns by position
         	f.team, \
         	f.pos, \
         	case when f.pos = 'QB' then (f.dkp/f.weeks) else 0 end as qb_per_wk,\
@@ -210,7 +209,6 @@ def createranktable(weekNum, local, totalweeks):
         	case when f.pos = 'TE' then avg.pts_wk else 0 end as teavgpts \
         	from                                                                                            \
         		(SELECT                                                                                     \
-        			-- join to position here                                                                \
         		team,                                                                                       \
         		pos,                                                                                        \
         		sum(dkp) as dkp,                                                                            \
@@ -240,7 +238,6 @@ def createranktable(weekNum, local, totalweeks):
         						GROUP BY 1,2,3,4,5) b                                                       \
         					WHERE a.yearweek <= b.yearweek and b.team = a.team and b.pos = a.pos) <= %s     \
         					and pos in ('QB', 'WR', 'RB', 'TE') GROUP BY 1, 2) f                                        \
-        				-- #####join start                                                                              \
         				LEFT JOIN (                                                                                     \
         				SELECT                                                                                          \
         				pos,                                                                                            \
@@ -278,7 +275,6 @@ def createranktable(weekNum, local, totalweeks):
         								GROUP BY 1,2,3,4,5) b                                                           \
         							WHERE a.yearweek <= b.yearweek and b.team = a.team and b.pos = a.pos) <= %s         \
         						and pos in ('QB', 'WR', 'RB', 'TE') GROUP BY 1, 2) f GROUP BY 1) avg ON avg.pos = f.pos \
-        				-- #####join end                                                                  \
         	) g                                                                                           \
         GROUP BY 1 ORDER BY 2 DESC) of                                                                    \
         LEFT JOIN                                                                                         \
@@ -291,7 +287,6 @@ def createranktable(weekNum, local, totalweeks):
         sum(te_per_wk) - sum(teavgpts) as tevar                                                           \
         FROM                                                                                              \
         	(SELECT                                                                                       \
-        		-- break out into columns by position                                                     \
         	f.opp,                                                                                        \
         	f.pos,                                                                                        \
         	case when f.pos = 'QB' then (f.dkp/f.weeks) else 0 end as qb_per_wk,                          \
@@ -304,7 +299,6 @@ def createranktable(weekNum, local, totalweeks):
         	case when f.pos = 'TE' then avg.pts_wk else 0 end as teavgpts                                 \
         	from                                                                                          \
         		(SELECT                                                                                   \
-        			-- join to position here                                                              \
         		opp,                                                                                      \
         		pos,                                                                                      \
         		sum(dkp) as dkp,                                                                          \
@@ -334,7 +328,6 @@ def createranktable(weekNum, local, totalweeks):
         						GROUP BY 1,2,3,4,5) b                                                     \
         					WHERE a.yearweek <= b.yearweek and b.opp = a.opp and b.pos = a.pos) <= %s     \
         				and pos in ('QB', 'WR', 'RB', 'TE') GROUP BY 1, 2) f                                            \
-        				-- #####join start                                                                              \
         				LEFT JOIN (                                                                                     \
         				SELECT                                                                                          \
         				pos,                                                                                            \
@@ -372,7 +365,6 @@ def createranktable(weekNum, local, totalweeks):
         								GROUP BY 1,2,3,4,5) b                                                           \
         							WHERE a.yearweek <= b.yearweek and b.opp = a.opp and b.pos = a.pos) <= %s           \
         						and pos in ('QB', 'WR', 'RB', 'TE') GROUP BY 1, 2) f GROUP BY 1) avg ON avg.pos = f.pos \
-        				-- #####join end                                              \
         	) g                                                                       \
         	LEFT JOIN                                                                 \
         	(                                                                         \
