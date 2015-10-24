@@ -401,7 +401,7 @@ def main():
     local = False
     createsaltable(weekNum, local)
     
-    createranktable(int(weekNum), local, 5)
+    createranktable(int(weekNum), local, 4)
     
 if __name__ == '__main__':
     main()
