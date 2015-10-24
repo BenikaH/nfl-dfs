@@ -382,6 +382,17 @@ def createranktable(weekNum, local, totalweeks):
     x = con.cursor()
     x.execute(query)
     
+    with con:
+        query = "SELECT * FROM team_ranks;"
+        x = con.cursor()
+        x.execute(query)
+        rows = x.fetchall()
+        fp = open('teamranks.csv', 'w')
+        myFile = csv.writer(fp)
+        myFile.writerows(rows)
+        print rows
+        fp.close()
+    
     return
 
 def main():
