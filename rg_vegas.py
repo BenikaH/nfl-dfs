@@ -20,36 +20,40 @@ def getweek():
             
     return weekNum
 
-weekNum = getweek()
+def security(site,fldr):
+    
+    info = []
+    myfile = fldr + 'myinfo.txt'
 
-# firstPull = raw_input("Are these opening odds (y/n)? ")
+    siteDict = {}
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for row in g:
+            newlist = row.split(' ')
+            siteDict[newlist[0]] = {}
+            siteDict[newlist[0]]['username'] = newlist[1]
+            siteDict[newlist[0]]['password'] = newlist[2]
+                
+    info = [siteDict[site]['username'],siteDict[site]['password']]
+    
+    return info
+    
+def main():
+    
+    weekNum = getweek()
 
-headerList = ['Week', 'Date', 'Time', 'HomeAway', 'Team', 'Opp', 'Team Spread', 'Opp Spread', 'Total Points', 'Team Proj Score', 'Opp Proj Score', 'Opening Team Score', 'Opening Opp Score', 'Team Score Chg', 'Opp Score Chg']
+    # firstPull = raw_input("Are these opening odds (y/n)? ")
 
-local = False
-if local == False:
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-else:
-    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+    headerList = ['Week', 'Date', 'Time', 'HomeAway', 'Team', 'Opp', 'Team Spread', 'Opp Spread', 'Total Points', 'Team Proj Score', 'Opp Proj Score', 'Opening Team Score', 'Opening Opp Score', 'Team Score Chg', 'Opp Score Chg']
 
-with con:
-
-# bring in past results
-    cur = con.cursor()
-    cur.execute("SELECT * FROM rotogrinders_odds WHERE week = %d" % (weekNum))
-
-    rows = cur.fetchall()
-    if len(rows) > 0:
-        firstPull = 'n'
+    local = False
+    if local == False:
+        fldr = 'nfl-dfs/'
+        serverinfo = security('mysql', fldr)
+        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-nfl')
     else:
-        firstPull = 'y'
-
-# firstPull = 'y'         ### TEMPORARY TO SOLVE ISSUE
-
-if firstPull.lower() != 'y':
-
-    pastresults = []
-    holder = []
+        fldr = ''
+        con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
     with con:
 
@@ -59,98 +63,122 @@ if firstPull.lower() != 'y':
 
         rows = cur.fetchall()
         if len(rows) > 0:
-            for row in rows:
-                for item in row:
-                    holder.append(item)
-                pastresults.append(holder)
-                holder = []
+            firstPull = 'n'
+        else:
+            firstPull = 'y'
 
-    # print pastresults
+    # firstPull = 'y'         ### TEMPORARY TO SOLVE ISSUE
 
-r = requests.get("https://rotogrinders.com/pages/nfl-vegas-odds-page-56651").text
-soup = BeautifulSoup(r)
+    if firstPull.lower() != 'y':
 
-table = soup.find_all("tbody")[0]
+        pastresults = []
+        holder = []
 
-gameSet = table.find_all("tr")
+        with con:
 
-game = []
-gameList = []
+        # bring in past results
+            cur = con.cursor()
+            cur.execute("SELECT * FROM rotogrinders_odds WHERE week = %d" % (weekNum))
 
-for rows in gameSet:
-    items = rows.find_all("td")
-    game.append(weekNum)
-    for item in items:
-        game.append(item.text.strip().replace('    ',' '))
-    for i in range(0,3):
-        game.append(0.00)
-    gameList.append(game)
+            rows = cur.fetchall()
+            if len(rows) > 0:
+                for row in rows:
+                    for item in row:
+                        holder.append(item)
+                    pastresults.append(holder)
+                    holder = []
+
+        # print pastresults
+
+    r = requests.get("https://rotogrinders.com/pages/nfl-vegas-odds-page-56651").text
+    soup = BeautifulSoup(r)
+
+    table = soup.find_all("tbody")[0]
+
+    gameSet = table.find_all("tr")
+
     game = []
+    gameList = []
 
-# print gameList
-
-####### Convert results into individual lines by team
-hmorder = [0,1,2,4,3,6,5,7,9,8]
-aworder = [0,1,2,3,4,5,6,7,8,9]
-
-holder = []
-gameinfo = []
-
-for game in gameList:
-    # print game
-    holder = [game[i] for i in hmorder]  # List method to put items into home team order
-    holder.insert(3, 'Home')             # Add 'Home' to home teams
-    gameinfo.append(holder)
-    holder = [game[i] for i in aworder]  # List method to put items into away team order
-    holder.insert(3, 'Away')             # Add 'Away' to away teams
-    gameinfo.append(holder)
-
-# print gameinfo[0]
-
-if firstPull.lower() == 'y':
-    for game in gameinfo:
-        for i in range(0,4):
+    for rows in gameSet:
+        items = rows.find_all("td")
+        game.append(weekNum)
+        for item in items:
+            game.append(item.text.strip().replace('    ',' '))
+        for i in range(0,3):
             game.append(0.00)
-        game[11] = game[9]
-        game[12] = game[10]
-        game[13] = 0.00
-        game[14] = 0.00
-else:
-    for game in gameinfo:
-        for i in range(0,4):
-            game.append(0.00)
-        for pull in pastresults:
-            # print pull
-            # print game
-            if game[4] == pull[5]:
-                game[11] = pull[12]
-                game[12] = pull[13]
-                game[13] = round(float(game[9]),2) - round(float(game[11]),2)
-                game[14] = round(float(game[10]),2) - round(float(game[12]),2)
-                continue
+        gameList.append(game)
+        game = []
+
+    # print gameList
+
+    ####### Convert results into individual lines by team
+    hmorder = [0,1,2,4,3,6,5,7,9,8]
+    aworder = [0,1,2,3,4,5,6,7,8,9]
+
+    holder = []
+    gameinfo = []
+
+    for game in gameList:
+        # print game
+        holder = [game[i] for i in hmorder]  # List method to put items into home team order
+        holder.insert(3, 'Home')             # Add 'Home' to home teams
+        gameinfo.append(holder)
+        holder = [game[i] for i in aworder]  # List method to put items into away team order
+        holder.insert(3, 'Away')             # Add 'Away' to away teams
+        gameinfo.append(holder)
+
+    # print gameinfo[0]
+
+    if firstPull.lower() == 'y':
+        for game in gameinfo:
+            for i in range(0,4):
+                game.append(0.00)
+            game[11] = game[9]
+            game[12] = game[10]
+            game[13] = 0.00
+            game[14] = 0.00
+    else:
+        for game in gameinfo:
+            for i in range(0,4):
+                game.append(0.00)
+            for pull in pastresults:
+                # print pull
+                # print game
+                if game[4] == pull[5]:
+                    game[11] = pull[12]
+                    game[12] = pull[13]
+                    game[13] = round(float(game[9]),2) - round(float(game[11]),2)
+                    game[14] = round(float(game[10]),2) - round(float(game[12]),2)
+                    continue
 
 
-#### Add to dictionary
-# dictList = []
-# for games in gameList:  # Create a dictionary from each row, then add to a list for csv export
-#     gamedict = {}
-#     for header in headerList:
-#         gamedict[header] = games[headerList.index(header)]
-#     dictList.append(gamedict)
+    #### Add to dictionary
+    # dictList = []
+    # for games in gameList:  # Create a dictionary from each row, then add to a list for csv export
+    #     gamedict = {}
+    #     for header in headerList:
+    #         gamedict[header] = games[headerList.index(header)]
+    #     dictList.append(gamedict)
 
-####### Add to database
+    ####### Add to database
 
-query = "DELETE FROM rotogrinders_odds WHERE week = %d" % (weekNum)
-x = con.cursor()
-x.execute(query)
+    query = "DELETE FROM rotogrinders_odds WHERE week = %d" % (weekNum)
+    x = con.cursor()
+    x.execute(query)
 
-for row in gameinfo:
-    # print row
-    with con:
-        query = "INSERT INTO rotogrinders_odds (week, game_date, game_time, home_away, team, opp, team_spread, \
-            opp_spread, total_pts, team_proj, opp_proj, team_proj_open, opp_proj_open, team_proj_chg, opp_proj_chg) \
-            VALUES (%d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" % \
-            (int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7], \
-            row[8], row[9], row[10], row[11], row[12], row[13], row[14])
-        x = con.cursor()
-        x.execute(query)
+    for row in gameinfo:
+        # print row
+        with con:
+            query = "INSERT INTO rotogrinders_odds (week, game_date, game_time, home_away, team, opp, team_spread, \
+                opp_spread, total_pts, team_proj, opp_proj, team_proj_open, opp_proj_open, team_proj_chg, opp_proj_chg) \
+                VALUES (%d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'")" % \
+                (int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6], row[7], \
+                row[8], row[9], row[10], row[11], row[12], row[13], row[14])
+            x = con.cursor()
+            x.execute(query)
+
+    return
+    
+if __name__ == '__main__':
+    main()

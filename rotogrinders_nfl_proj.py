@@ -22,160 +22,187 @@ def getweek():
             
     return weekNum
 
+def security(site,fldr):
+    
+    info = []
+    myfile = fldr + 'myinfo.txt'
 
-headerList = ['week', 'playerID', 'playernm_full', 'playernm_first', 'playernm_last', 'Pos', 'GameInfo', 'dk_salary', 'dkp', 'dk_value', 'playerLink', 'fd_salary', 'fdp', 'fd_value']
+    siteDict = {}
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for row in g:
+            newlist = row.split(' ')
+            siteDict[newlist[0]] = {}
+            siteDict[newlist[0]]['username'] = newlist[1]
+            siteDict[newlist[0]]['password'] = newlist[2]
+                
+    info = [siteDict[site]['username'],siteDict[site]['password']]
+    
+    return info
 
-weekNum = getweek()
+def main():
+    
+    headerList = ['week', 'playerID', 'playernm_full', 'playernm_first', 'playernm_last', 'Pos', 'GameInfo', 'dk_salary', 'dkp', 'dk_value', 'playerLink', 'fd_salary', 'fdp', 'fd_value']
 
-# weekNum = int(raw_input("Week number? "))
+    weekNum = getweek()
 
-####### Sign into Rotogrinders
-r = requests.get("https://rotogrinders.com/sign-in")
+    # weekNum = int(raw_input("Week number? "))
+    
+    info = security('Rotogrinders', fldr)
+    ####### Sign into Rotogrinders
+    r = requests.get("https://rotogrinders.com/sign-in")
 
-headers = {'User-Agent': 'Mozilla/5.0'}
-payload = {'username':'MurrDogg4','password':'tro2bro'}
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    payload = {'username':info[0],'password':info[1]}
 
-session = requests.Session()
-session.post('https://rotogrinders.com/sign-in',headers=headers,data=payload)
+    session = requests.Session()
+    session.post('https://rotogrinders.com/sign-in',headers=headers,data=payload)
 
-####### Start Draftkings scrape
-r = session.get("https://rotogrinders.com/projected-stats/nfl?site=draftkings").text
-soup = BeautifulSoup(r)
+    ####### Start Draftkings scrape
+    r = session.get("https://rotogrinders.com/projected-stats/nfl?site=draftkings").text
+    soup = BeautifulSoup(r)
 
-table = soup.find_all("tbody")
+    table = soup.find_all("tbody")
 
-playerSet = soup.find_all("tr", class_="player")
-# print playerSet
+    playerSet = soup.find_all("tr", class_="player")
+    # print playerSet
 
-player = []
-playerList = []
-
-for rows in playerSet:
-    items = rows.find_all("td")
-    plLink = rows.find("a")                     # Find player ID link
-    plLink = plLink['href']                     # Capture player ID link
-    testing = re.finditer('-.+-',plLink)        # Search player ID link for the ID using firstnm-lastnm-ID
-    for i in testing:
-        pidchar = i.span()[1]                   # Gets the span (start, end) of the regex and uses the end
-    plID = int(plLink[pidchar:])                     # Get the ID from the link using pidchar as the start char
-    player.append(plID)
-    for item in items:
-        player.append(item.text.strip().replace('    ',' '))
-    player.append(plLink)
-    playerList.append(player)
     player = []
+    playerList = []
 
-time.sleep(2)                               # Sleep for 2 seconds between data pulls
+    for rows in playerSet:
+        items = rows.find_all("td")
+        plLink = rows.find("a")                     # Find player ID link
+        plLink = plLink['href']                     # Capture player ID link
+        testing = re.finditer('-.+-',plLink)        # Search player ID link for the ID using firstnm-lastnm-ID
+        for i in testing:
+            pidchar = i.span()[1]                   # Gets the span (start, end) of the regex and uses the end
+        plID = int(plLink[pidchar:])                     # Get the ID from the link using pidchar as the start char
+        player.append(plID)
+        for item in items:
+            player.append(item.text.strip().replace('    ',' '))
+        player.append(plLink)
+        playerList.append(player)
+        player = []
 
-####### Start Fanduel scrape
+    time.sleep(2)                               # Sleep for 2 seconds between data pulls
 
-r = session.get("https://rotogrinders.com/projected-stats/nfl?site=fanduel").text
-soup = BeautifulSoup(r)
+    ####### Start Fanduel scrape
 
-table = soup.find_all("tbody")
+    r = session.get("https://rotogrinders.com/projected-stats/nfl?site=fanduel").text
+    soup = BeautifulSoup(r)
 
-playerSet = soup.find_all("tr", class_="player")
-# print playerSet
+    table = soup.find_all("tbody")
 
-player = []
-fdplayerList = []
+    playerSet = soup.find_all("tr", class_="player")
+    # print playerSet
 
-for rows in playerSet:
-    items = rows.find_all("td")
-    plLink = rows.find("a")                     # Find player ID link
-    plLink = plLink['href']                     # Capture player ID link
-    testing = re.finditer('-.+-',plLink)        # Search player ID link for the ID using firstnm-lastnm-ID
-    for i in testing:
-        pidchar = i.span()[1]                   # Gets the span (start, end) of the regex and uses the end
-    plID = int(plLink[pidchar:])                     # Get the ID from the link using pidchar as the start char
-    player.append(plID)
-    for item in items:
-        player.append(item.text.strip().replace('    ',' '))
-    player.append(plLink)
-    fdplayerList.append(player)
     player = []
+    fdplayerList = []
 
-##### Pre-append placeholders for FD data
+    for rows in playerSet:
+        items = rows.find_all("td")
+        plLink = rows.find("a")                     # Find player ID link
+        plLink = plLink['href']                     # Capture player ID link
+        testing = re.finditer('-.+-',plLink)        # Search player ID link for the ID using firstnm-lastnm-ID
+        for i in testing:
+            pidchar = i.span()[1]                   # Gets the span (start, end) of the regex and uses the end
+        plID = int(plLink[pidchar:])                     # Get the ID from the link using pidchar as the start char
+        player.append(plID)
+        for item in items:
+            player.append(item.text.strip().replace('    ',' '))
+        player.append(plLink)
+        fdplayerList.append(player)
+        player = []
 
-for player in playerList:
-    for i in range(0,3):
-        player.append('')
+    ##### Pre-append placeholders for FD data
 
-##### Add Fanduel info to master list based on player ID
-
-for player in playerList:
-    for fdplayer in fdplayerList:
-        if player[0] == fdplayer[0]:
-            player[8] = fdplayer[4] 
-            player[9] = fdplayer[5]
-            player[10] = fdplayer[6]
-            continue
-            
-###### Check for any Fanduel players that aren't in DK
-counter = 0
-for fdplayer in fdplayerList:
     for player in playerList:
-        if fdplayer[0] == player[0]:
-            counter += 1
-            continue
-    if counter == 0:
         for i in range(0,3):
-            fdplayer.insert(4, 0)
-        playerList.append(fdplayer)
+            player.append('')
 
-####### Convert salaries from $X.XK to XXXX (int)
-for player in playerList:
-    try:
-        player[4] = int(round(float(player[4].replace('$','').replace('K','')),1) * 1000)
-    except:
-        player[4] = 0
-    try:
-        player[8] = int(round(float(player[8].replace('$','').replace('K','')),1) * 1000)
-    except:
-        player[8] = 0
+    ##### Add Fanduel info to master list based on player ID
 
-for player in playerList:               # Finishing touches - add week num + first, last name
-    player.insert(0, weekNum)
-    if player[3] != 'DST':
-        playerNm = player[2].split(' ',1)  
-        player.insert(3, playerNm[0])
-        player.insert(4, playerNm[1])
+    for player in playerList:
+        for fdplayer in fdplayerList:
+            if player[0] == fdplayer[0]:
+                player[8] = fdplayer[4] 
+                player[9] = fdplayer[5]
+                player[10] = fdplayer[6]
+                continue
+            
+    ###### Check for any Fanduel players that aren't in DK
+    counter = 0
+    for fdplayer in fdplayerList:
+        for player in playerList:
+            if fdplayer[0] == player[0]:
+                counter += 1
+                continue
+        if counter == 0:
+            for i in range(0,3):
+                fdplayer.insert(4, 0)
+            playerList.append(fdplayer)
+
+    ####### Convert salaries from $X.XK to XXXX (int)
+    for player in playerList:
+        try:
+            player[4] = int(round(float(player[4].replace('$','').replace('K','')),1) * 1000)
+        except:
+            player[4] = 0
+        try:
+            player[8] = int(round(float(player[8].replace('$','').replace('K','')),1) * 1000)
+        except:
+            player[8] = 0
+
+    for player in playerList:               # Finishing touches - add week num + first, last name
+        player.insert(0, weekNum)
+        if player[3] != 'DST':
+            playerNm = player[2].split(' ',1)  
+            player.insert(3, playerNm[0])
+            player.insert(4, playerNm[1])
+        else:
+            player.insert(3,'')      
+            player.insert(4,'')
+    print playerList
+
+    ####### Add to Dictionary
+    #
+    # dictList = []
+    # for players in playerList:  # Create a dictionary from each row, then add to a list for csv export
+    #     playerdict = {}
+    #     for header in headerList:
+    #         playerdict[header] = players[headerList.index(header)]
+    #     dictList.append(playerdict)
+    #
+    # print dictList
+
+    ####### Add to database
+    local = False
+    if local == False:
+        fldr = 'nfl-dfs/'
+        serverinfo = security('mysql', fldr)
+        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-nfl')
     else:
-        player.insert(3,'')      
-        player.insert(4,'')
-print playerList
+        fldr = ''
+        con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
-####### Add to Dictionary
-#
-# dictList = []
-# for players in playerList:  # Create a dictionary from each row, then add to a list for csv export
-#     playerdict = {}
-#     for header in headerList:
-#         playerdict[header] = players[headerList.index(header)]
-#     dictList.append(playerdict)
-#
-# print dictList
+    query = "DELETE FROM rotogrinders_wkly_proj WHERE week = %d" % (weekNum)
+    x = con.cursor()
+    x.execute(query)
 
-####### Add to database
-local = False
-if local == False:
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-else:
-    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+    for row in playerList:
+        print row
+        with con:
+            query = "INSERT INTO rotogrinders_wkly_proj (week, player_id, playernm_full, playernm_first, playernm_last, \
+                pos, gameinfo, dk_salary, dkp, dk_value, weblink, fd_salary, fdp, fd_value) \
+                VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", %d, %1.2f, %1.2f, "'"%s"'", \
+                %d, %1.2f, %1.2f)" % \
+                (int(row[0]), int(row[1]), row[2], row[3], row[4], row[5], row[6], int(row[7]), \
+                round(float(row[8]),2), round(float(row[9]),2), row[10], int(row[11]), round(float(row[12]),2), round(float(row[13]),2))
+            x = con.cursor()
+            x.execute(query)
 
-query = "DELETE FROM rotogrinders_wkly_proj WHERE week = %d" % (weekNum)
-x = con.cursor()
-x.execute(query)
-
-for row in playerList:
-    print row
-    with con:
-        query = "INSERT INTO rotogrinders_wkly_proj (week, player_id, playernm_full, playernm_first, playernm_last, \
-            pos, gameinfo, dk_salary, dkp, dk_value, weblink, fd_salary, fdp, fd_value) \
-            VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", "'"%s"'", %d, %1.2f, %1.2f, "'"%s"'", \
-            %d, %1.2f, %1.2f)" % \
-            (int(row[0]), int(row[1]), row[2], row[3], row[4], row[5], row[6], int(row[7]), \
-            round(float(row[8]),2), round(float(row[9]),2), row[10], int(row[11]), round(float(row[12]),2), round(float(row[13]),2))
-        x = con.cursor()
-        x.execute(query)
-
+    return
+    
+if __name__ == '__main__':
+    main()
