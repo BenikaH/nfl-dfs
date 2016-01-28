@@ -119,32 +119,58 @@ def wrscore(player):
     return fpts
 
 
-local = False
-if local == False:
-    fldr = 'nfl-dfs/'
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-else:
-    fldr = ''
-    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+def security(site,fldr):
     
-# f = open('weekinfo.txt', 'r')             ### Local
-# f = open('nfl-dfs/weekinfo.txt', 'r')
-# ftext = f.read().split(',')
-# weekNum = int(ftext[0])
-weekNum = getweek()
+    info = []
+    myfile = fldr + 'myinfo.txt'
+
+    siteDict = {}
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for row in g:
+            newlist = row.split(' ')
+            siteDict[newlist[0]] = {}
+            siteDict[newlist[0]]['username'] = newlist[1]
+            siteDict[newlist[0]]['password'] = newlist[2]
+                
+    info = [siteDict[site]['username'],siteDict[site]['password']]
     
-playerList = cbsdata(weekNum)
+    return info
 
-query = "DELETE FROM cbssports_wkly_proj WHERE week = %d" % (weekNum)
-x = con.cursor()
-x.execute(query)
+def main():
 
-for row in playerList:
-    print row
-    with con:
-        query = "INSERT INTO cbssports_wkly_proj (week, player_id, pos, playernm_full, team, dkp, fdp) \
-        VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f)" % \
-        (int(row[0]), int(row[1]), row[2], row[3], row[4], round(float(row[5]),2), round(float(row[6]),2))
-        x = con.cursor()
-        x.execute(query)
+    local = False
+    if local == False:
+        fldr = 'nfl-dfs/'
+        serverinfo = security('mysql', fldr)
+        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-nfl')
+    else:
+        fldr = ''
+        con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+    
+    # f = open('weekinfo.txt', 'r')             ### Local
+    # f = open('nfl-dfs/weekinfo.txt', 'r')
+    # ftext = f.read().split(',')
+    # weekNum = int(ftext[0])
+    weekNum = getweek()
+    
+    playerList = cbsdata(weekNum)
+
+    query = "DELETE FROM cbssports_wkly_proj WHERE week = %d" % (weekNum)
+    x = con.cursor()
+    x.execute(query)
+
+    for row in playerList:
+        print row
+        with con:
+            query = "INSERT INTO cbssports_wkly_proj (week, player_id, pos, playernm_full, team, dkp, fdp) \
+            VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f)" % \
+            (int(row[0]), int(row[1]), row[2], row[3], row[4], round(float(row[5]),2), round(float(row[6]),2))
+            x = con.cursor()
+            x.execute(query)
+            
+    return
+    
+if __name__ == '__main__':
+    main()
 

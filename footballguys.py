@@ -25,7 +25,7 @@ def getweek():
     return weekNum
 
 
-def getsiteproj(weekNum, site, playerDict):    
+def getsiteproj(weekNum, site, playerDict, info):    
     
     # playerList = []
     if weekNum < 10:
@@ -40,7 +40,7 @@ def getsiteproj(weekNum, site, playerDict):
         abbr = 'dk'
         ptabbr = 'dkp'
         
-    payload = {'amember_login':'MurrDogg4','amember_pass':'tro2bro', 'amember_redirect_url': 'http://subscribers.footballguys.com/apps/article.php?article=tremblay_v15' + site + linkwk}
+    payload = {'amember_login':info[0],'amember_pass':info[1], 'amember_redirect_url': 'http://subscribers.footballguys.com/apps/article.php?article=tremblay_v15' + site + linkwk}
 
     session = requests.Session()
     session.post('http://subscribers.footballguys.com/amember/login.php', data=payload)
@@ -117,6 +117,24 @@ def cleandict(playerDict):
                 playerDict[player][key] = 0.0
                 
     return playerDict
+    
+def security(site,fldr):
+    
+    info = []
+    myfile = fldr + 'myinfo.txt'
+
+    siteDict = {}
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for row in g:
+            newlist = row.split(' ')
+            siteDict[newlist[0]] = {}
+            siteDict[newlist[0]]['username'] = newlist[1]
+            siteDict[newlist[0]]['password'] = newlist[2]
+                
+    info = [siteDict[site]['username'],siteDict[site]['password']]
+    
+    return info
 
 def main():
     
@@ -124,7 +142,8 @@ def main():
     runtoday = False
     if local == False:
         fldr = 'nfl-dfs/'
-        con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+        serverinfo = security('mysql', fldr)
+        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-nfl')
 
         # Only run on Tue, Thu, Sat, Sun
         weekday = datetime.date.today().isoweekday()
@@ -146,9 +165,11 @@ def main():
         sites = ['FanDuel', 'DraftKings']
 
         playerDict = {}
+        
+        info = security('Footballguys', fldr)
 
         for site in sites:
-            playerDict = getsiteproj(weekNum, site, playerDict)
+            playerDict = getsiteproj(weekNum, site, playerDict, info)
             time.sleep(3)
 
         playerDict = cleandict(playerDict)

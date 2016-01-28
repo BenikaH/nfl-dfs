@@ -210,6 +210,24 @@ def openplayerdict():
             playerIDdict[row['gsis_id']] = {'player_id': row['player_id'], 'name': row['name'], \
                                             'pos': row['pos'], 'url': row['url']}
     return playerIDdict
+
+def security(site,fldr):
+    
+    info = []
+    myfile = fldr + 'myinfo.txt'
+
+    siteDict = {}
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for row in g:
+            newlist = row.split(' ')
+            siteDict[newlist[0]] = {}
+            siteDict[newlist[0]]['username'] = newlist[1]
+            siteDict[newlist[0]]['password'] = newlist[2]
+                
+    info = [siteDict[site]['username'],siteDict[site]['password']]
+    
+    return info
             
 def tableinsert(gamelist):
     
@@ -224,10 +242,13 @@ def tableinsert(gamelist):
     ### Open connection
     local = False
     if local == False:
-        con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
+        fldr = 'nfl-dfs/'
+        serverinfo = security('mysql', fldr)
+        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-nfl')
     else:
+        fldr = ''
         con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
-    
+        
     # Remove data with same year -- no dupes
     query = "DELETE FROM nfl_gamecenter WHERE year = %d AND week = %d" % (year, week)
     x = con.cursor()
@@ -342,51 +363,52 @@ def tableinsert(gamelist):
     print "gamelist inserted into table"
     return
 
+def main():
+    playerIDdict = openplayerdict()
+    gamelist = []
+    # year = 2014
+    # for week in Weeks[:2]:
+    #     for i in range(0,2):
+    #         # week = 1
+    #         # year = 2015
+    #         dateinfo = [week, year]
+    #         gameid = getgameids(dateinfo[0], dateinfo[1])[i]
+    #         getgamedata(gameid, dateinfo, playerIDdict, gamelist)
+    #     print year, ": week ", week, " complete"
+    #     time.sleep(2)
 
-playerIDdict = openplayerdict()
-gamelist = []
-# year = 2014
-# for week in Weeks[:2]:
-#     for i in range(0,2):
-#         # week = 1
-#         # year = 2015
-#         dateinfo = [week, year]
-#         gameid = getgameids(dateinfo[0], dateinfo[1])[i]
-#         getgamedata(gameid, dateinfo, playerIDdict, gamelist)
-#     print year, ": week ", week, " complete"
-#     time.sleep(2)
+    # Only run on Tuesday
+    weekday = datetime.date.today().isoweekday()
 
-# Only run on Tuesday
-weekday = datetime.date.today().isoweekday()
-
-if weekday == 2:
-    Years = [2015]
-    # f = open('weekinfo.txt', 'r')             ### Local
-    # f = open('nfl-dfs/weekinfo.txt', 'r')
-    # ftext = f.read().split(',')
-    # weekNum = int(ftext[0])-1
+    if weekday == 2:
+        Years = [2015]
+        # f = open('weekinfo.txt', 'r')             ### Local
+        # f = open('nfl-dfs/weekinfo.txt', 'r')
+        # ftext = f.read().split(',')
+        # weekNum = int(ftext[0])-1
     
-    weekNum = getweek()-1
+        weekNum = getweek()-1
 
-    for year in Years:
-        # if year == 2015:
-        #     maxwk = 3
-        # else:
-        #     maxwk = 18
-        # Weeks = [x for x in range(1,maxwk)]
-        Weeks = [weekNum]
-        for week in Weeks:
-            dateinfo = [week, year]
-            for gameid in getgameids(dateinfo[0], dateinfo[1]):
-                print gameid
-                getgamedata(gameid, dateinfo, playerIDdict, gamelist)       #### Returns gamelist
-                # tableinsert(gamelist)
-            print year, ": week ", week, " complete"
-            time.sleep(1)
+        for year in Years:
+            # if year == 2015:
+            #     maxwk = 3
+            # else:
+            #     maxwk = 18
+            # Weeks = [x for x in range(1,maxwk)]
+            Weeks = [weekNum]
+            for week in Weeks:
+                dateinfo = [week, year]
+                for gameid in getgameids(dateinfo[0], dateinfo[1]):
+                    print gameid
+                    getgamedata(gameid, dateinfo, playerIDdict, gamelist)       #### Returns gamelist
+                    # tableinsert(gamelist)
+                print year, ": week ", week, " complete"
+                time.sleep(1)
 
-    saveplayerdict(playerIDdict)
-
-
-    tableinsert(gamelist)
+        saveplayerdict(playerIDdict)
 
 
+        tableinsert(gamelist)
+
+if __name__ == '__main__':
+    main()

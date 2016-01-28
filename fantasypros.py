@@ -96,46 +96,69 @@ def fantasyscore(player):
     fpts = [round(dkscore,2), round(fdscore,2)]
     
     return fpts
+    
+def security(site,fldr):
+    
+    info = []
+    myfile = fldr + 'myinfo.txt'
 
+    siteDict = {}
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for row in g:
+            newlist = row.split(' ')
+            siteDict[newlist[0]] = {}
+            siteDict[newlist[0]]['username'] = newlist[1]
+            siteDict[newlist[0]]['password'] = newlist[2]
+                
+    info = [siteDict[site]['username'],siteDict[site]['password']]
+    
+    return info
 
-weekNum = getweek()
+def main():
+    weekNum = getweek()
 
-posSet = ["QB", "RB", "WR", "TE"]
+    posSet = ["QB", "RB", "WR", "TE"]
 
-playerList = []
+    playerList = []
 
-for pos in posSet:
-    getPlayerProj(weekNum, pos, playerList)
-    print pos, "complete"
+    for pos in posSet:
+        getPlayerProj(weekNum, pos, playerList)
+        print pos, "complete"
 
-print playerList
+    print playerList
 
-####### Add to database
-local = False
-if local == False:
-    fldr = 'nfl-dfs/'
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-else:
-    fldr = ''
-    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+    ####### Add to database
+    local = False
+    if local == False:
+        fldr = 'nfl-dfs/'
+        serverinfo = security('mysql', fldr)
+        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-nfl')
+    else:
+        fldr = ''
+        con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
 
-query = "DELETE FROM fantasypros_wkly_proj WHERE week = %d" % (weekNum)
-x = con.cursor()
-x.execute(query)
+    query = "DELETE FROM fantasypros_wkly_proj WHERE week = %d" % (weekNum)
+    x = con.cursor()
+    x.execute(query)
 
-for row in playerList:
-    print row
-    with con:
-        query = "INSERT INTO fantasypros_wkly_proj (week, pos, player_id, team, playernm_full, \
-        pass_att, pass_cmp, pass_yds, pass_td, ints, rush_att, rush_yds, rush_td, rec, rec_yds, \
-        rec_td, fumbles_lost, fpts, dkp, fdp) \
-        VALUES (%d, "'"%s"'", %d, "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, \
-        %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
-        (int(row[0]), row[1], int(row[2]), row[3], row[4], \
-        round(float(row[5]),2), round(float(row[6]),2), round(float(row[7]),2), round(float(row[8]),2), \
-        round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), \
-        round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2), round(float(row[15]),2), \
-        round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2))
-        x = con.cursor()
-        x.execute(query)
+    for row in playerList:
+        print row
+        with con:
+            query = "INSERT INTO fantasypros_wkly_proj (week, pos, player_id, team, playernm_full, \
+            pass_att, pass_cmp, pass_yds, pass_td, ints, rush_att, rush_yds, rush_td, rec, rec_yds, \
+            rec_td, fumbles_lost, fpts, dkp, fdp) \
+            VALUES (%d, "'"%s"'", %d, "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, \
+            %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
+            (int(row[0]), row[1], int(row[2]), row[3], row[4], \
+            round(float(row[5]),2), round(float(row[6]),2), round(float(row[7]),2), round(float(row[8]),2), \
+            round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), \
+            round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2), round(float(row[15]),2), \
+            round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2))
+            x = con.cursor()
+            x.execute(query)
 
+    return
+    
+if __name__ == '__main__':
+    main()

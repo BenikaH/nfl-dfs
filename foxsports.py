@@ -86,64 +86,86 @@ def fantasyscore(player):
     fpts = [round(dkscore,2), round(fdscore,2)]
     
     return fpts
+
+def security(site,fldr):
     
-local = False
-if local == False:
-    fldr = 'nfl-dfs/'
-    con = MySQLdb.connect(host='mysql.server', user='MurrDogg4', passwd='syracuse', db='MurrDogg4$dfs-nfl')
-else:
-    fldr = ''
-    con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+    info = []
+    myfile = fldr + 'myinfo.txt'
 
-weekNum = getweek()
+    siteDict = {}
+    with open(myfile) as f:
+        g = f.read().splitlines()
+        for row in g:
+            newlist = row.split(' ')
+            siteDict[newlist[0]] = {}
+            siteDict[newlist[0]]['username'] = newlist[1]
+            siteDict[newlist[0]]['password'] = newlist[2]
+                
+    info = [siteDict[site]['username'],siteDict[site]['password']]
+    
+    return info
 
-# weekNum = int(raw_input("Week number? "))
+def main():    
+    local = False
+    if local == False:
+        fldr = 'nfl-dfs/'
+        serverinfo = security('mysql', fldr)
+        con = MySQLdb.connect(host='mysql.server', user=serverinfo[0], passwd=serverinfo[1], db='MurrDogg4$dfs-nfl')
+    else:
+        fldr = ''
+        con = MySQLdb.connect('localhost', 'root', '', 'test')          #### Localhost connection
+
+    weekNum = getweek()
+
+    # weekNum = int(raw_input("Week number? "))
    
-r = requests.get("http://www.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=-1&split=4&playerSearchStatus=1").text
-soup = BeautifulSoup(r)
+    r = requests.get("http://www.foxsports.com/fantasy/football/commissioner/Research/Projections.aspx?page=1&position=-1&split=4&playerSearchStatus=1").text
+    soup = BeautifulSoup(r)
 
-page = soup.find("a", {"id" : "MainColumn_LastPageLink"})
-print page
-lastpage = int(page.text)
-print lastpage
-playerList = []
-for i in range(1,lastpage):
-    getFoxProj(i,weekNum)
+    page = soup.find("a", {"id" : "MainColumn_LastPageLink"})
+    print page
+    lastpage = int(page.text)
+    print lastpage
+    playerList = []
+    for i in range(1,lastpage):
+        getFoxProj(i,weekNum)
     
-for player in playerList:
-    for item in player:
-        if item == '--':
-            player[player.index(item)] = '0.00'
-            # item = item.replace('--','0.00')
-    dkscore = fantasyscore(player)[0]
-    fdscore = fantasyscore(player)[1]
-    player.append(dkscore)
-    player.append(fdscore)
-print playerList[:2]
+    for player in playerList:
+        for item in player:
+            if item == '--':
+                player[player.index(item)] = '0.00'
+                # item = item.replace('--','0.00')
+        dkscore = fantasyscore(player)[0]
+        fdscore = fantasyscore(player)[1]
+        player.append(dkscore)
+        player.append(fdscore)
+    print playerList[:2]
 
 
 
 
-####### Add to database
+    ####### Add to database
 
-query = "DELETE FROM foxsports_wkly_proj WHERE week = %d" % (weekNum)
-x = con.cursor()
-x.execute(query)
+    query = "DELETE FROM foxsports_wkly_proj WHERE week = %d" % (weekNum)
+    x = con.cursor()
+    x.execute(query)
 
-for row in playerList:
-    print row
-    with con:
-        query = "INSERT INTO foxsports_wkly_proj (week, player_id, playernm_full, team, pos, \
-        pass_td, pass_yds, pass_att, pass_cmp, ints, rush_td, rush_yds, rush_att, rec_td, rec_yds, \
-        rec, twopt_conv, fumble_recovery_td, fumbles_lost, fpts, dkp, fdp) \
-        VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, \
-        %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
-        (int(row[0]), int(row[1]), row[2], row[3], row[4], \
-        round(float(row[5]),2), round(float(row[6]),2), round(float(row[7]),2), round(float(row[8]),2), \
-        round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), \
-        round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2), round(float(row[15]),2), \
-        round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2), \
-        round(float(row[20]),2), round(float(row[21]),2))
-        x = con.cursor()
-        x.execute(query)
+    for row in playerList:
+        print row
+        with con:
+            query = "INSERT INTO foxsports_wkly_proj (week, player_id, playernm_full, team, pos, \
+            pass_td, pass_yds, pass_att, pass_cmp, ints, rush_td, rush_yds, rush_att, rec_td, rec_yds, \
+            rec, twopt_conv, fumble_recovery_td, fumbles_lost, fpts, dkp, fdp) \
+            VALUES (%d, %d, "'"%s"'", "'"%s"'", "'"%s"'", %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, \
+            %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f, %1.2f)" % \
+            (int(row[0]), int(row[1]), row[2], row[3], row[4], \
+            round(float(row[5]),2), round(float(row[6]),2), round(float(row[7]),2), round(float(row[8]),2), \
+            round(float(row[9]),2), round(float(row[10]),2), round(float(row[11]),2), \
+            round(float(row[12]),2), round(float(row[13]),2), round(float(row[14]),2), round(float(row[15]),2), \
+            round(float(row[16]),2), round(float(row[17]),2), round(float(row[18]),2), round(float(row[19]),2), \
+            round(float(row[20]),2), round(float(row[21]),2))
+            x = con.cursor()
+            x.execute(query)
 
+if __name__ == '__main__':
+    main()
